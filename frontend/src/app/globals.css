@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0C0C0C;
+  --foreground: #131313;
+  --border: #333333;
+  --primary-text: #FFFFFF;
+  --secondary-text: #727272;
+  --primary-blue: #3BBEFF;
+  --primary-orange: #FF9500;
+  --primary-btn-hover: #E4E4E4;
+}
+
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: "Montserrat", serif;
+}
