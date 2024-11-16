@@ -10,5 +10,7 @@ export const configuration = {
     EMAIL_PASS: process.env.EMAIL_PASSWORD,
     OTP_LENGTH: process.env.OTP_LENGTH,
     OTP_EXPIRATION_IN_MINUTES: process.env.OTP_EXPIRATION_IN_MINUTES,
-    JWT_SECRET: process.env.JWT_SECRET
+    JWT_SECRET: process.env.JWT_SECRET,
+    FRONTEND: process.env.FRONTEND,
+    FRONTEND_PORT: process.env.FRONTEND_PORT
 }

@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 
 // Config
 import { configuration } from './config/config.js'
@@ -13,6 +14,13 @@ const app = express()
 
 // Connecting to DB
 ConnectDB()
+
+//Cors
+app.use(cors({
+    origin: `${configuration.FRONTEND}${configuration.FRONTEND_PORT}`,
+    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    allowedHeaders: ['Content-Type', 'application/json'],
+}))
 
 // Middlewares
 app.use(express.json())
