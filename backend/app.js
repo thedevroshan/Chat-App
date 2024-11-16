@@ -19,7 +19,8 @@ ConnectDB()
 app.use(cors({
     origin: `${configuration.FRONTEND}${configuration.FRONTEND_PORT}`,
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
-    allowedHeaders: ['Content-Type', 'application/json'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }))
 
 // Middlewares
