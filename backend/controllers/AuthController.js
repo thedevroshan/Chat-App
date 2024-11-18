@@ -13,6 +13,7 @@ import { OTP } from '../models/otp.js'
 // Utils
 import { CreateSendOTP } from '../utils/CreateSendOTP.js'
 import { ValidateOTP } from '../utils/ValidateOTP.js'
+import { GenerateSendJWTToken } from '../utils/GenerateSendJWTToken.js'
 
 
 // Register Controller
@@ -34,11 +35,11 @@ export const Register = async (req, res) => {
         const doesUsernameExists = await User.findOne({username})
 
         if(doesEmailExists){
-            return res.status(400).json({ok: false,msg: 'Email is already exists'})
+            return res.status(400).json({ok: false,msg: 'Email already exists.'})
         }
 
         if(doesUsernameExists){
-            return res.status(400).json({ok: false,msg: 'Username is already taken'})
+            return res.status(400).json({ok: false,msg: 'Username is already taken.'})
         }
 
         await User.create({
@@ -81,6 +82,7 @@ export const VerifyEmail = async (req, res) => {
 
         await OTP.findOneAndDelete({email: isVerified.email})
 
+        await GenerateSendJWTToken(res,isVerified._id)
         res.status(200).json({ok: true, msg: 'Email Verified'})
     } catch (error) {
         if(configuration.IS_DEV_ENV){
@@ -125,11 +127,13 @@ export const Login = async (req, res) => {
             return res.status(400).json({ok: false, msg: 'Incorrect Credentials'})
         }
 
-        const jwt_token = await jwt.sign({userId: doesUsernameExists._id}, configuration.JWT_SECRET, {algorithm: 'HS512'})
+        if(!doesUsernameExists.verified){
+            await CreateSendOTP(configuration.OTP_LENGTH, doesUsernameExists.email, 'Email Verification', `Here is your OTP for email verification. Note this otp will expire in ${configuration.OTP_EXPIRATION_IN_MINUTES} minutes.`, configuration.OTP_EXPIRATION_IN_MINUTES)
+            return res.status(401).json({ok: false, msg: 'Verify Your Email'})
+        }
         
-        res.cookie('login_session', jwt_token, {
-            httpOnly: true
-        })
+        await GenerateSendJWTToken(res,doesUsernameExists._id)
+        res.status(200).json({ok: true, msg: 'Logged In'})
     } catch (error) {
         if(configuration.IS_DEV_ENV){
             console.log('Error in Register Function\n'+error)
@@ -144,7 +148,9 @@ export const Login = async (req, res) => {
 export const Logout = async (req, res) => {
     try {
         res.cookie('login_session', '', {
-            httpOnly: true
+            httpOnly: true,
+            sameSite: 'None',
+            secure: true,
         })
     } catch (error) {
         if(configuration.IS_DEV_ENV){

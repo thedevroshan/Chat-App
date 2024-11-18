@@ -16,7 +16,13 @@ module.exports = {
         'primary-blue': 'var(--primary-blue)',
         'primary-orange': 'var(--primary-orange)',
         'primary-btn-hover': 'var(--primary-btn-hover)',
+        'primary-btn-disable': 'var(--primary-btn-disable)',
+        'primary-nav-hover': 'var(--primary-nav-hover)'
       },
+      screens: {
+        'mobile-xsm': '320px'
+      }
+      
     },
   },
   plugins: [],

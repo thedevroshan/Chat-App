@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "./components/Button";
 import Register from "./components/Register";
@@ -20,6 +20,33 @@ export default function Home() {
       setLoginComponentActive(false);
     }
   };
+
+  const StayOnHomePage = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/api/user/isloggedin`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      const res = await response.json()
+      if(res.ok){
+        window.location.pathname = '/chat_home'
+      }
+    } catch (error) {
+      console.warn(error)
+    }
+  }
+
+  useEffect(() => {
+    StayOnHomePage()
+  
+    return () => {
+
+    }
+  }, [])
+  
 
   return (
     <>
