@@ -28,6 +28,7 @@ app.use(cors({
 // Middlewares
 app.use(express.json())
 app.use(cookieParser())
+app.use(express.raw({type: '*/*', limit: '5MB'}))
 
 
 

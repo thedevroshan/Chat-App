@@ -1,4 +1,5 @@
 import { OTP } from "../models/otp.js"
+import { configuration } from "../config/config.js"
 
 export const ValidateOTP = async (otp) => {
     try {
@@ -18,12 +19,19 @@ export const ValidateOTP = async (otp) => {
             }
         }
 
+        await OTP.findOneAndDelete({otp})
+
         return {
             ok: true,
             msg: 'OTP Verified',
             user: doesOTPExists.email
         }
     } catch (error) {
-        
+        if(configuration.IS_DEV_ENV){
+            console.log('Error in ValidateOTP File' + error)
+        }
+        else {
+            console.log('Some error occurred')
+        }
     }
 }

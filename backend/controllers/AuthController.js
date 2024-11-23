@@ -80,8 +80,6 @@ export const VerifyEmail = async (req, res) => {
             return res.status(400).json({ok: false, msg: 'Unable to verify email'})
         }
 
-        await OTP.findOneAndDelete({email: isVerified.email})
-
         await GenerateSendJWTToken(res,isVerified._id)
         res.status(200).json({ok: true, msg: 'Email Verified'})
     } catch (error) {

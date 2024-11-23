@@ -20,6 +20,7 @@ export const CreateSendOTP = async (otpLength,email, subject, text, expirationIn
             otp: newOTP,
             expiration: Date.now() + expirationInMinutes * 60 * 1000
         })
+        return true
     } catch (error) {
         if(configuration.IS_DEV_ENV){
             console.log('Error in CreateSendOTP File' + error)
