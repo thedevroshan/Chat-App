@@ -313,6 +313,35 @@ export const ChangeLink = async (req, res) => {
     }
 }
 
+export const RemoveLink = async (req, res) => {
+    try {
+        const isUpdated = await User.findByIdAndUpdate(
+            req.user.id
+            ,
+            {
+                $pull: {
+                    "links": {
+                        _id: req.query.id
+                    }
+                }
+            }
+        )
+
+        if(!isUpdated){
+            return res.status(400).json({ok: false, msg: 'Unablet to remove link'})
+        }
+
+        res.status(200).json({ok: true, msg: 'Link Removed Successfully'})
+    } catch (error) {
+        if(configuration.IS_DEV_ENV){
+            console.log('Error in ChangeLink Function\n'+error)
+        }
+        else {
+            res.status(500).json({ok: false, msg: 'Internal Server Error'})
+        }
+    }
+}
+
 export const ChangeProfilePic = async (req, res) => {
     try {
         if(!req.body || req.body.length === 0){
@@ -339,7 +368,7 @@ export const ChangeProfilePic = async (req, res) => {
             return res.status(400).json({ok: false, msg: 'Unable to change profile pic'})
         }
 
-        const fileViewURL = configuration.APPWRITE_ENDPOINT + `/storage/buckets/${configuration.PROFILEPIC_BUCKET_ID}/files/${isUploaded.$id}/view?project=673e1b970023bfee394a&mode=admin`;
+        const fileViewURL = configuration.APPWRITE_ENDPOINT + `/storage/buckets/${configuration.PROFILEPIC_BUCKET_ID}/files/${isUploaded.$id}/view?project=${configuration.APPWRITE_PROJECT_ID}&mode=admin`;
 
         const isUserUpdated = await User.findByIdAndUpdate(req.user.id,{
             $set: {

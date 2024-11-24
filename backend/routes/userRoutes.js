@@ -19,7 +19,8 @@ import {
     AddLink,
     ChangeLink,
     ChangeProfilePic,
-    RemoveProfilePic
+    RemoveProfilePic,
+    RemoveLink
 } from '../controllers/UserController.js'
 
 // Utils
@@ -50,6 +51,8 @@ router.put('/resetpassword',ValidatePassword, ResetPassword)
 router.post('/add/link',isLoggedIn, AddLink)
 
 router.put('/change/link/',isLoggedIn, ChangeLink)
+
+router.delete('/remove/link/',isLoggedIn, RemoveLink)
 
 router.delete('/remove/profilepic',isLoggedIn, RemoveProfilePic)
 
