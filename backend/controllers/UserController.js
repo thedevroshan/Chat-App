@@ -6,6 +6,7 @@ import { configuration } from "../config/config.js"
 
 // Models
 import { User } from '../models/user.js'
+import { Server } from '../models/server.js'
 
 // Utils
 import { CreateSendOTP } from '../utils/CreateSendOTP.js'
@@ -26,6 +27,24 @@ export const GetUserInfo = async (req, res) => {
     } catch (error) {
         if(configuration.IS_DEV_ENV){
             console.log('Error in GetUserInfo Function\n'+error)
+        }
+        else {
+            res.status(500).json({ok: false, msg: 'Internal Server Error'})
+        }
+    }
+}
+
+export const GetAllServers = async (req, res) => {
+    try {
+        const servers = await Server.find({admin: req.user.id}).select("-roles -members -categories")
+        if(servers.length === 0){
+            return res.status(404).json({ok: false, msg: 'No Servers Found'})
+        }
+
+        res.status(200).json({ok: true, msg: 'Servers Found', data: servers})
+    } catch (error) {
+        if(configuration.IS_DEV_ENV){
+            console.log('Error in GetAllServers Function\n'+error)
         }
         else {
             res.status(500).json({ok: false, msg: 'Internal Server Error'})
@@ -117,7 +136,7 @@ export const ChangeUsername = async (req, res) => {
 
         const result = validationResult(req)
         if(!result.isEmpty()){
-            return res.status(400).json({ok:false, msg: result.array()})
+            return res.status(400).json({ok:false, msg: result.array()[0].msg})
         }
 
         if(isUsernameExists){
@@ -368,7 +387,7 @@ export const ChangeProfilePic = async (req, res) => {
             return res.status(400).json({ok: false, msg: 'Unable to change profile pic'})
         }
 
-        const fileViewURL = configuration.APPWRITE_ENDPOINT + `/storage/buckets/${configuration.PROFILEPIC_BUCKET_ID}/files/${isUploaded.$id}/view?project=${configuration.APPWRITE_PROJECT_ID}&mode=admin`;
+        const fileViewURL = configuration.APPWRITE_ENDPOINT + `/storage/buckets/${configuration.PROFILEPIC_BUCKET_ID}/files/${isUploaded.$id}/view?project=${configuration.APPWRITE_PROJECT_ID}`;
 
         const isUserUpdated = await User.findByIdAndUpdate(req.user.id,{
             $set: {

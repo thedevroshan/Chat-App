@@ -14,7 +14,7 @@ const serverSchema = new Schema({
         ref: 'User',
         required: true
     },
-    categroies: {
+    categories: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Category'
     },

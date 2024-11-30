@@ -9,6 +9,7 @@ import { checkLogin } from '../middlewares/checkLogin.js'
 // Controllers
 import {
     GetUserInfo,
+    GetAllServers,
     ChangeEmailRequest,
     ChangeEmail,
     UpdateProfile,
@@ -31,6 +32,8 @@ import { ValidatePassword } from '../utils/PasswordValidator.js'
 router.get('/isloggedin', checkLogin)
 
 router.get('/getuserinfo',isLoggedIn, GetUserInfo)
+
+router.get('/getallservers',isLoggedIn, GetAllServers)
 
 router.put('/changeemailrequest',isLoggedIn, ChangeEmailRequest)
 

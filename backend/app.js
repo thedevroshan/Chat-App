@@ -12,6 +12,7 @@ import { ConnectDB } from './db/connect.js'
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import serverRoutes from './routes/serverRoutes.js'
+import categoryRoutes from './routes/categoryRoutes.js'
 
 const app = express()
 
@@ -39,6 +40,8 @@ app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 
 app.use('/api/server', serverRoutes)
+
+app.use('/api/category', categoryRoutes)
 
 app.listen(configuration.PORT, ()=>{
     console.log(`Server is running at http://localhost:${configuration.PORT}`)

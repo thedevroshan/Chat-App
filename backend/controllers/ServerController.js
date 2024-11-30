@@ -39,7 +39,7 @@ export const CreateServer = async (req, res) => {
       $push: { created_servers: server._id },
     });
 
-    res.status(200).json({ ok: false, msg: "Server Created Successfully" });
+    res.status(200).json({ ok: true, msg: "Server Created Successfully" });
   } catch (error) {
     if (configuration.IS_DEV_ENV) {
       console.log("Error in CreateServer Function\n" + error);
