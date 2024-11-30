@@ -19,7 +19,7 @@ const Button = ({variant, children, onClick, disable, disableOn, onDisableChildr
 
     {/* Secondary Button */}
     {
-        variant == 'secondary'?<button onClick={onClick} className={`bg-transparent h-10 px-6 outline-none py-1 font-semibold rounded-lg border-2 hover:bg-white hover:text-black transition-all active:scale-95`}>{children}</button>:''
+        variant == 'secondary'?<button onClick={onClick} className={`bg-transparent h-10 px-6 outline-none py-1 text-white font-semibold rounded-lg border-2 hover:bg-white hover:text-black transition-all active:scale-95`}>{children}</button>:''
     }
     {
         variant == 'secondary-full'?<button onClick={onClick} className={`bg-transparent w-full h-10 outline-none px-6 py-1 font-semibold rounded-lg border-2 hover:bg-white hover:text-black transition-all active:scale-95`}>{children}</button>:''

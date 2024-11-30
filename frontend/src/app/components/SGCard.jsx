@@ -2,9 +2,9 @@ import React from "react";
 
 const SGCard = ({ icon, name, notificationCount }) => {
   return (
-    <div className="w-fit xl:w-[23vw] h-fit py-1 px-1 flex items-center justify-between rounded-xl hover:bg-primary-nav-hover transition-all cursor-pointer">
+    <div className="w-fit xl:w-[23vw] h-fit py-2 px-2 flex items-center justify-between rounded-xl hover:bg-primary-nav-hover transition-all cursor-pointer">
       <div className="flex w-full h-fit gap-2 items-center">
-        <img src={icon} alt="" className="rounded-xl w-12" />
+        <img src={icon?icon:'/user-icon.png'} alt="" className="rounded-full w-12" />
 
         <input className="hidden xl:block text-white text-lg bg-transparent border-none outline-none cursor-pointer select-none" readOnly value={name}/>
       </div>

@@ -3,13 +3,16 @@ import React from 'react'
 import { useEffect } from 'react'
 
 import Navbar from '../components/Navbar'
-import HorizontalNavbar from '../components/HorizontalNavbar'
-import UserProfile from '../components/UserProfile'
-import Search from '../components/Search'
-import ActiveUser from '../components/ActiveUser'
-import OptionHeader from '../components/OptionHeader'
+import NotSupportedPage from '../components/NotSupportedPage'
+import ChatBox from '../components/ChatBox'
+import ChatBoxDetailPanel from '../components/ChatBoxDetailPanel'
 
-const page = () => { 
+import { useScreenSupport } from '../contexts/useScreenSupported'
+
+
+const ChatHome = () => { 
+  const isSupported = useScreenSupport()
+
   const StayOnChatHomePage = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/api/user/isloggedin`, {
@@ -28,24 +31,23 @@ const page = () => {
     }
   }
 
+
   useEffect(() => {
     StayOnChatHomePage()
-  
-    return () => {
-
-    }
   }, [])
 
   return (
-    <div className='text-white'>
+    <>
+    {isSupported && 
+    <>
       <Navbar/>
-      <HorizontalNavbar/>
-      <UserProfile username={'thedevroshan'} profile_pic={'/user-icon.png'}/>
-      <Search />
-      <ActiveUser/>
-      <OptionHeader/>
-    </div>
+      <ChatBox/>
+      <ChatBoxDetailPanel/>
+    </>
+    }
+    {!isSupported && <NotSupportedPage/>}
+    </>
   )
 }
 
-export default page
+export default ChatHome
