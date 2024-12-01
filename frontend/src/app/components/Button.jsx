@@ -1,6 +1,6 @@
 import React, { Children } from 'react'
 
-const Button = ({variant, children, onClick, disable, disableOn, onDisableChildren}) => {
+const Button = ({variant, children, onClick, disableOn, onDisableChildren}) => {
   return (
     <>
     {/* Primary Button */}
