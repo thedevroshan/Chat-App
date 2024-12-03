@@ -4,6 +4,9 @@ import React, { createContext, useEffect, useContext } from "react";
 // Store
 import useUserStore from "../store/useUserStore";
 
+// API
+import { GetUserInfoAPI } from "../../../api/userAPI";
+
 // Create a Context
 const UserInfoContext = createContext();
 
@@ -12,23 +15,16 @@ const UserInfoContext = createContext();
 export const UserInfoProvider = ({ children }) => {
   const setUser = useUserStore((state)=>state.setUser)
   const FetchUser = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND}/api/user/getuserinfo`,
-        {
-          credentials: "include",
-          method: "GET",
-        }
-      );
-      const res = await response.json();
-      if (!res.ok) {
-        console.warn(res.msg);
-      } else {
-        setUser(res.data);
+    const res = await GetUserInfoAPI()
+    
+    if(!res.ok){
+      console.warn(res.msg)
+      if(window.location.pathname != '/'){
+        window.location.pathname = '/'
       }
-    } catch (error) {
-      console.warn(error);
+      return
     }
+    setUser(res.data)
   };
 
   useEffect(() => {

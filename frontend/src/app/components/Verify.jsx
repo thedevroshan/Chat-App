@@ -5,8 +5,14 @@ import { useState } from "react";
 import Input from "./Input";
 import Button from "./Button";
 
-const Verify = ({ errors, setErrors }) => {
-  const [isVerifying, setIsVerifying] = useState(false);
+// API
+import { VerfiyEmailAPI, ResendOTPAPI } from "../../../api/authAPI";
+
+const Verify = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    fetch_error: ''
+  });
   const [otpForm, setOTPForm] = useState({
     otp: "",
   });
@@ -22,67 +28,34 @@ const Verify = ({ errors, setErrors }) => {
   };
 
   const HandleVerification = async () => {
-    try {
-      setIsVerifying(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND}/api/auth/verifyemail`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...otpForm,
-          }),
-        }
-      );
-      const res = await response.json();
-
-      setIsVerifying(false);
-
-      if (!res.ok) {
-        setErrors({
-          fetch_error: res.msg,
-        });
-      } else {
-        window.location.pathname = '/chat_home'
-        localStorage.removeItem("email");
-      }
-    } catch (error) {
-      setErrors({
-        fetch_error: "Something went wrong. Please try again later",
-      });
+    if(otpForm.otp == ''){
+      setErrors({fetch_error: 'OTP is required.'})
+      return
     }
+
+    setIsLoading(true)
+    const res = await VerfiyEmailAPI(otpForm)
+
+    if(!res.ok){
+      setErrors({fetch_error: res.msg})
+      setIsLoading(false)
+      return
+    }
+
+    // if verification successfull
+    localStorage.removeItem('email')
+    setIsLoading(false)
+    window.location.pathname = '/chat_home'
   };
 
+  // Resend OTP
   const ResendOTP = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND}/api/auth/resendotp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: localStorage.getItem("email"),
-          }),
-        }
-      );
-
-      const res = await response.json();
-
-      if (!res.ok) {
-        setErrors({
-          fetch_error: res.msg,
-        });
-      }
-    } catch (error) {
-      setErrors({
-        fetch_error: "Something went wrong. Please try again later",
-      });
+    const res = ResendOTPAPI(localStorage.getItem('email'));
+    if(!res.ok){
+      setErrors({fetch_error: res.msg})
+      return
     }
+    setErrors({fetch_error:''})
   };
 
   return (
@@ -124,7 +97,7 @@ const Verify = ({ errors, setErrors }) => {
           variant={"primary-loader-full"}
           children={"VERIFY"}
           onClick={HandleVerification}
-          disableOn={isVerifying}
+          disableOn={isLoading}
           onDisableChildren={"Wait..."}
         ></Button>
       </div>

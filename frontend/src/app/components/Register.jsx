@@ -7,7 +7,10 @@ import Verify from "./Verify";
 import { useState } from "react";
 
 // Utils
-import { Validate } from "../utils/Validation";
+import { ValidateAll } from "../utils/Validation";
+
+// API
+import { RegisterAPI } from "../../../api/authAPI";
 
 const Register = ({ onClick }) => {
   const [formData, setFormData] = useState({
@@ -19,8 +22,8 @@ const Register = ({ onClick }) => {
 
   const [errors, setErrors] = useState({});
 
-  const [isRegistering, setIsRegistering] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const HandleChange = (e) => {
     const { name, value } = e.target;
@@ -32,36 +35,22 @@ const Register = ({ onClick }) => {
   };
 
   const HandleSubmit = async () => {
-    if (Validate(formData, setErrors)) {
-      try {
-        setIsRegistering(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/api/auth/register`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ...formData,
-            }),
-          }
-        );
-        const res = await response.json();
-        setIsRegistering(false);
-        if (!res.ok) {
-          setErrors({
-            fetch_error: res.msg,
-          });
-        } else {
-          setIsRegistered(true);
-          localStorage.setItem('email', formData.email)
-        }
-      } catch (error) {
-        setErrors({
-          fetch_error: "Something went wrong. Please try again later",
-        });
-        setIsRegistering(false);
+    if (ValidateAll(formData, setErrors)) {
+      // Loading is true
+      setIsLoading(true)
+
+      // api call
+      const res = await RegisterAPI(formData)
+      if(!res.ok){
+        setErrors({fetch_error: res.msg})
+        setIsLoading(false)
+        return
       }
+
+      // if res.ok is true
+      localStorage.setItem('email', formData.email)
+      setIsRegistered(true)
+      setIsLoading(false)
     }
   };
 
@@ -144,7 +133,7 @@ const Register = ({ onClick }) => {
               variant={"primary-loader-full"}
               children={"REGISTER"}
               onClick={HandleSubmit}
-              disableOn={isRegistering}
+              disableOn={isLoading}
               onDisableChildren={"Wait..."}
             ></Button>
           </div>

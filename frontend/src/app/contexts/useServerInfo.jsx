@@ -4,6 +4,9 @@ import React, { createContext, useEffect, useContext } from "react";
 // Store
 import useServerStore from "../store/useServerStore";
 
+// API
+import { GetUserServersAPI } from "../../../api/userAPI";
+
 // Create a Context
 const ServerInfoContext = createContext();
 
@@ -12,23 +15,13 @@ const ServerInfoContext = createContext();
 export const ServerInfoProvider = ({ children }) => {
   const setServer = useServerStore((state)=>state.setServer)
   const GetAllServers = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND}/api/user/getallservers`,
-        {
-          credentials: "include",
-          method: "GET",
-        }
-      );
-      const res = await response.json();
-      if (!res.ok) {
-        console.warn(res.msg);
-      } else {
-        setServer(res.data);
-      }
-    } catch (error) {
-      console.warn(error);
+    const res = await GetUserServersAPI()
+    if(!res.ok){
+      console.warn('Something went wrong', res.msg)
+      return
     }
+
+    setServer(res.data)
   };
 
   useEffect(() => {

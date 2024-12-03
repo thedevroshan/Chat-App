@@ -8,6 +8,9 @@ import NotSupportedPage from "./components/NotSupportedPage";
 
 import { useScreenSupport } from "./contexts/useScreenSupported";
 
+// API
+import { IsLoggedInAPI } from "../../api/userAPI";
+
 export default function Home() {
   const [isRegisterComponentActive, setRegisterComponentActive] =
     useState(false);
@@ -28,30 +31,16 @@ export default function Home() {
   };
 
   const StayOnHomePage = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND}/api/user/isloggedin`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const res = await response.json();
-      if (res.ok) {
-        window.location.pathname = "/chat_home";
-      }
-    } catch (error) {
-      console.warn(error);
+    const res = await IsLoggedInAPI()
+    if(!res.ok){
+      console.warn('Something went wrong', res.msg)
+      return
     }
+    window.location.pathname = '/chat_home'
   };
 
   useEffect(() => {
     StayOnHomePage();
-
-    return () => {};
   }, []);
 
   return (
