@@ -12,7 +12,7 @@ const montserrat = Montserrat({
 })
 
 export const metadata = {
-  title: "BaatChit",
+  title: "AurBhaii",
   description: "More than a chatting app",
 };
 

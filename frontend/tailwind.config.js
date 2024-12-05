@@ -17,7 +17,8 @@ module.exports = {
         'primary-orange': 'var(--primary-orange)',
         'primary-btn-hover': 'var(--primary-btn-hover)',
         'primary-btn-disable': 'var(--primary-btn-disable)',
-        'primary-nav-hover': 'var(--primary-nav-hover)'
+        'primary-nav-hover': 'var(--primary-nav-hover)',
+        'light-secondary': 'var(--light-secondary)',
       },
       screens: {
         'mobile-xsm': '320px'

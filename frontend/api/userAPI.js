@@ -121,3 +121,56 @@ export const ResetPasswordAPI = async (formData) => {
     console.warn("Something went wrong", error);
   }
 };
+
+
+export const UpdateProfileAPI = async (formData) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/updateprofile`,
+      {
+        method: "PUT",
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          bio: formData.bio,
+        }),
+      }
+    );
+
+    const res = await response.json();
+    const newRes = {
+      ok: res.ok,
+      msg: res.msg,
+      statusCode: response.status,
+    };
+    return newRes;
+  } catch (error) {
+    console.warn("Something went wrong", error);
+  }
+};
+
+
+export const RemoveProfilePicAPI = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/remove/profilepic`,
+      {
+        method: "DELETE",
+        credentials: 'include',
+      }
+    );
+
+    const res = await response.json();
+    const newRes = {
+      ok: res.ok,
+      msg: res.msg,
+      statusCode: response.status,
+    };
+    return newRes;
+  } catch (error) {
+    console.warn("Something went wrong", error);
+  }
+};

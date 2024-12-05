@@ -52,7 +52,7 @@ export default function Home() {
             {isHomeComponentActive && (
               <div className="sm:w-[40vw] w-[100vw] h-[100vh] flex flex-col justify-center gap-2 px-5 ">
                 <span className="font-medium sm:text-[3rem] lg:text-[5rem] text-[3rem] -mb-6 -ml-2">
-                  GALBAAT
+                  AurBhaii
                 </span>
                 <p className="lg:text-lg sm:text-sm font-medium text-lg w-64">
                   An application to communicate to world, gaming and chill out

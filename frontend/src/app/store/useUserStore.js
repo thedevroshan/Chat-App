@@ -30,6 +30,21 @@ const useUserStore = create((set) => ({
         set((state)=>({
             email: email
         }))
+    },
+    setName: (name) => {
+        set((state)=>({
+            name
+        }))
+    },
+    setBio: (bio) => {
+        set((state)=>({
+            bio
+        }))
+    },
+    setProfilePic: (profile_pic) => {
+        set(()=>({
+            profile_pic
+        }))
     }
 }))
 
