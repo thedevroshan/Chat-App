@@ -4,7 +4,7 @@ import { useState } from "react";
 
 // Components
 import Button from "./Button";
-import ChangeProfilePicOrBanner from "./ChangeProfilePicOrBanner";
+import ChangeProfilePic from "./ChangeProfilePic";
 
 // Stores
 import useUserStore from "../store/useUserStore";
@@ -23,8 +23,7 @@ const Profile = () => {
   // States
   const [isLoading, setIsLoading] = useState(false);
   const [isReadOnly, setReadOnly] = useState(true);
-  const [changeProfilePicOrBanner, setProfilePicOrBanner] = useState(false);
-  const [defaultChangeProfilePicOrBannerTab, setDefaultChangeProfilePicOrBannerTab] = useState('');
+  const [changeProfilePic, setProfilePicture] = useState(false);
   const [errors, setErrors] = useState({ fetch_error: "" });
 
   const HandleOnChange = (e) => {
@@ -56,17 +55,13 @@ const Profile = () => {
     setProfilePic("");
   };
 
-  const ActiveChangeProfilePicOrBannerWindow = (e) => {
-    setProfilePicOrBanner(true);
-    setDefaultChangeProfilePicOrBannerTab(e.target.name == 'banner-button'?'banner':'profilepic')
-  };
 
   return (
     <>
       <section className="bg-transparent w-full h-fit flex flex-col gap-3 px-4">
         <div className="w-full h-fit flex flex-col gap-3 lg:flex-row">
           {/* PROFILE PIC */}
-          <div className="bg-background w-full h-fit rounded-2xl px-2 py-2 gap-2 flex items-center justify-between">
+          <div className="bg-background w-full h-fit rounded-2xl px-2 py-2 gap-24 flex items-center justify-between">
             <img
               src={profile_pic ? profile_pic : "/user-icon.png"}
               alt="Profile Pic"
@@ -77,7 +72,7 @@ const Profile = () => {
               <Button
                 variant={"primary-full"}
                 children={"CHANGE PROFILE PIC"}
-                onClick={ActiveChangeProfilePicOrBannerWindow}
+                onClick={()=>{setProfilePicture(true)}}
                 name={"profilepic-button"}
               />
               <Button
@@ -85,33 +80,6 @@ const Profile = () => {
                 children={"REMOVE"}
                 textColor={"text-white"}
                 onClick={RemoveProfilePic}
-              />
-            </div>
-          </div>
-
-          {/* BANNER */}
-          <div className="bg-background w-full h-fit rounded-2xl px-2 py-2 flex items-center justify-between gap-2">
-            <div className="bg-orange-600 w-20 h-9 rounded-lg flex items-center">
-              <img
-                src="/test4.png"
-                alt="Banner"
-                className="w-40 object-cover aspect-video rounded-lg"
-              />
-            </div>
-
-            <div className="flex  w-full flex-col gap-2">
-              <Button
-                variant={"primary-full"}
-                children={"CHANGE COLOR"}
-                onClick={ActiveChangeProfilePicOrBannerWindow}
-                name={"banner-button"}
-              />
-              <Button
-                variant={"secondary-full"}
-                children={"UPLOAD IMAGE"}
-                textColor={"text-white"}
-                onClick={ActiveChangeProfilePicOrBannerWindow}
-                name={"banner-button"}
               />
             </div>
           </div>
@@ -175,7 +143,7 @@ const Profile = () => {
           </div>
         </div>
 
-        {changeProfilePicOrBanner && <ChangeProfilePicOrBanner setProfilePicOrBanner={setProfilePicOrBanner}/>}
+        {changeProfilePic && <ChangeProfilePic setProfilePicture={setProfilePicture}/>}
       </section>
     </>
   );

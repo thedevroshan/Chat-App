@@ -1,7 +1,10 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { useState } from "react";
 
+// Components
+import Search from "./Search";
 import SGCard from "./SGCard";
 
 // Stores
@@ -15,6 +18,9 @@ const Navbar = () => {
 
   // Server Store
   const servers = useServerStore((state) => state.servers);
+
+  // States
+  const [isSeacrh, setSeacrh] = useState(false)
 
   const NavLinks = [
     {
@@ -44,6 +50,10 @@ const Navbar = () => {
     },
   ];
 
+  const ActiveSearch = () => {
+    setSeacrh(true)
+  }
+
   return (
     <nav className="hidden sm:flex xl:w-[24vw] bg-background w-[6vw] h-[100vh] flex-col select-none gap-2 items-center">
       {/* User Profile */}
@@ -70,7 +80,7 @@ const Navbar = () => {
           {/* Search Button */}
           <div className="flex items-center justify-start gap-3 hover:bg-primary-nav-hover group py-1 px-1 cursor-pointer transition-all rounded-lg">
             <img src="/search-icon.png" alt="search" className="xl:w-6" />
-            <button className="hidden xl:block text-lg font-semibold transition-all group-hover:text-white">
+            <button className="hidden xl:block text-lg font-semibold transition-all group-hover:text-white" onClick={ActiveSearch}>
               Search
             </button>
           </div>
@@ -147,6 +157,8 @@ const Navbar = () => {
           </Link>
         ))}
       </div>
+
+      <Search/>
     </nav>
   );
 };

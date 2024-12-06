@@ -10,10 +10,10 @@ export const GetUserInfoAPI = async () => {
 
     const res = await response.json();
     const newRes = {
-      ok: res.ok,
-      msg: res.msg,
-      statusCode: response.status,
-      data: res.data
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
+      data: res.data?res.data:''
     };
     return newRes;
   } catch (error) {
@@ -33,10 +33,10 @@ export const GetUserServersAPI = async () => {
 
     const res = await response.json();
     const newRes = {
-      ok: res.ok,
-      msg: res.msg,
-      statusCode: response.status,
-      data: res.data
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
+      data: res.data?res.data:''
     };
     return newRes;
   } catch (error) {
@@ -56,9 +56,9 @@ export const IsLoggedInAPI = async () => {
 
     const res = await response.json();
     const newRes = {
-      ok: res.ok,
-      msg: res.msg,
-      statusCode: response.status,
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
     };
     return newRes;
   } catch (error) {
@@ -83,9 +83,9 @@ export const ForgotPasswordAPI = async (username_or_email) => {
 
     const res = await response.json();
     const newRes = {
-      ok: res.ok,
-      msg: res.msg,
-      statusCode: response.status,
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
     };
     return newRes;
   } catch (error) {
@@ -112,9 +112,9 @@ export const ResetPasswordAPI = async (formData) => {
 
     const res = await response.json();
     const newRes = {
-      ok: res.ok,
-      msg: res.msg,
-      statusCode: response.status,
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
     };
     return newRes;
   } catch (error) {
@@ -142,9 +142,9 @@ export const UpdateProfileAPI = async (formData) => {
 
     const res = await response.json();
     const newRes = {
-      ok: res.ok,
-      msg: res.msg,
-      statusCode: response.status,
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
     };
     return newRes;
   } catch (error) {
@@ -165,12 +165,40 @@ export const RemoveProfilePicAPI = async () => {
 
     const res = await response.json();
     const newRes = {
-      ok: res.ok,
-      msg: res.msg,
-      statusCode: response.status,
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
     };
     return newRes;
   } catch (error) {
     console.warn("Something went wrong", error);
   }
 };
+
+
+export const UploadProfilePicAPI = async (binaryImage) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/change/profilepic`,
+      {
+        method: "POST",
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/octet-stream'
+        },
+        body: binaryImage
+      }
+    );
+
+    const res = await response.json();
+    const newRes = {
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
+    };
+    return newRes;
+  } catch (error) {
+    console.warn("Something went wrong", error);
+  }
+};
+

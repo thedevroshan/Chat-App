@@ -230,16 +230,7 @@ const Account = () => {
 
   return (
     <>
-      <div className="w-[50vw] h-fit bg-background flex flex-col rounded-xl gap-2">
-        {/* Banner Div */}
-        <div className="w-full h-[20vh] bg-white rounded-tl-xl rounded-tr-xl">
-          <img
-            src="/test4.png"
-            alt=""
-            className="object-cover aspect-video w-full h-full rounded-tr-xl rounded-tl-xl"
-          />
-        </div>
-
+      <div className="w-[50vw] h-fit bg-background flex flex-col rounded-xl gap-2 py-3">
         {/* User Basic Info Div */}
         <div className="w-full h-fit flex select-none py-1 px-2 items-center justify-center gap-3">
           <img
