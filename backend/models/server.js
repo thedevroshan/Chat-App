@@ -46,6 +46,6 @@ const serverSchema = new Schema({
         type: String,
         default: ''
     }
-})
+}, {timestamps: true})
 
 export const Server = mongoose.model('Server', serverSchema)

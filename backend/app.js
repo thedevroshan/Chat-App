@@ -16,6 +16,7 @@ import userRoutes from './routes/userRoutes.js'
 import serverRoutes from './routes/serverRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
 import friendRequestRoutes from './routes/friendRequestRoutes.js'
+import messageRoutes from './routes/messageRoutes.js'
 
 // Connecting to DB
 ConnectDB()
@@ -45,6 +46,8 @@ app.use('/api/server', serverRoutes)
 app.use('/api/category', categoryRoutes)
 
 app.use('/api/friendrequest', friendRequestRoutes)
+
+app.use('/api/message', messageRoutes)
 
 httpServer.listen(configuration.PORT, ()=>{
     console.log(`Server is running at http://localhost:${configuration.PORT}`)

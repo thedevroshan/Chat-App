@@ -69,6 +69,6 @@ const userSchema = new Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'FriendRequest'
     }
-})
+}, {timestamps: true})
 
 export const User = mongoose.model('User', userSchema)

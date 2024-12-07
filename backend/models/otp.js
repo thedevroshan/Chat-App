@@ -13,6 +13,6 @@ const otpSchema = new Schema({
         type: String,
         required: true
     }
-})
+}, {timestamps: true})
 
 export const OTP = mongoose.model('OTP', otpSchema)
