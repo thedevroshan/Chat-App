@@ -17,7 +17,6 @@ const useUserStore = create((set) => ({
             name: user.name,
             profile_pic: user.profile_pic,
             bio: user.bio,
-            friends: user.friends,
             links: user.links,
         }))
     },
@@ -45,7 +44,12 @@ const useUserStore = create((set) => ({
         set(()=>({
             profile_pic
         }))
-    }
+    },
+    setFriends: (friends) => {
+        set(()=>({
+            friends
+        }))
+    },
 }))
 
 export default useUserStore

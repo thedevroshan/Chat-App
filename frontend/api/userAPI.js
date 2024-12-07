@@ -202,3 +202,49 @@ export const UploadProfilePicAPI = async (binaryImage) => {
   }
 };
 
+export const GetOtherUserInfoAPI = async (userId) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/getotheruserinfo/${userId}`,
+      {
+        method: "GET",
+        credentials: 'include',
+      }
+    );
+
+    const res = await response.json();
+    const newRes = {
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
+      data: res.data?res.data:''
+    };
+    return newRes;
+  } catch (error) {
+    console.warn("Something went wrong", error);
+  }
+};
+
+export const GetAllFriendsAPI = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/allfriends/`,
+      {
+        method: "GET",
+        credentials: 'include',
+      }
+    );
+
+    const res = await response.json();
+    const newRes = {
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
+      data: res.data?res.data:''
+    };
+    return newRes;
+  } catch (error) {
+    console.warn("Something went wrong", error);
+  }
+};
+

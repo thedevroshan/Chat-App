@@ -61,6 +61,14 @@ const userSchema = new Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Group'
     },
+    requests: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'FriendRequest'
+    },
+    requested: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'FriendRequest'
+    }
 })
 
 export const User = mongoose.model('User', userSchema)

@@ -4,12 +4,12 @@ import "./globals.css";
 import { ScreenSupportProvider } from "./contexts/useScreenSupported";
 import { UserInfoProvider } from "./contexts/useUserInfo";
 import { ServerInfoProvider } from "./contexts/useServerInfo";
-
+import { SocketContextProvider } from "./contexts/useSocketContext";
 
 const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['500','600', '700', '800', '900']
-})
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
+});
 
 export const metadata = {
   title: "AurBhaii",
@@ -21,11 +21,13 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <ScreenSupportProvider>
         <UserInfoProvider>
-          <ServerInfoProvider>
-            <body className={`antialiased flex items-center vsc-initialized`}>
-              {children}
-            </body>
-          </ServerInfoProvider>
+          <SocketContextProvider>
+            <ServerInfoProvider>
+              <body className={`antialiased flex items-center vsc-initialized`}>
+                {children}
+              </body>
+            </ServerInfoProvider>
+          </SocketContextProvider>
         </UserInfoProvider>
       </ScreenSupportProvider>
     </html>

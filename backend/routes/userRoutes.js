@@ -21,7 +21,9 @@ import {
     ChangeLink,
     ChangeProfilePic,
     RemoveProfilePic,
-    RemoveLink
+    RemoveLink,
+    GetOtherUserInfo,
+    GetAllFriends
 } from '../controllers/UserController.js'
 
 // Utils
@@ -34,6 +36,10 @@ router.get('/isloggedin', checkLogin)
 router.get('/getuserinfo',isLoggedIn, GetUserInfo)
 
 router.get('/getallservers',isLoggedIn, GetAllServers)
+
+router.get('/getotheruserinfo/:userId',isLoggedIn, GetOtherUserInfo)
+
+router.get('/allfriends',isLoggedIn, GetAllFriends)
 
 router.put('/changeemailrequest',isLoggedIn, ChangeEmailRequest)
 

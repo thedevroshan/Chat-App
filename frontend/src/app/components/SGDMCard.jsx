@@ -1,10 +1,10 @@
 import React from "react";
 
-const SGCard = ({ icon, name, notificationCount }) => {
+const SGDMCard = ({ icon, name, notificationCount }) => {
   return (
     <div className="w-fit xl:w-[23vw] h-fit py-2 px-2 flex items-center justify-between rounded-xl hover:bg-primary-nav-hover transition-all cursor-pointer">
       <div className="flex w-full h-fit gap-2 items-center">
-        <img src={icon?icon:'/user-icon.png'} alt="" className="rounded-full w-12" />
+        <img src={icon?icon:'/user-icon.png'} alt="" className="rounded-full w-12 border border-border" />
 
         <input className="hidden xl:block text-white text-lg bg-transparent border-none outline-none cursor-pointer select-none" readOnly value={name}/>
       </div>
@@ -19,4 +19,4 @@ const SGCard = ({ icon, name, notificationCount }) => {
   );
 };
 
-export default SGCard;
+export default SGDMCard;

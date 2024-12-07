@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 
+import {app, httpServer} from './socket/socket.js'
+
 // Config
 import { configuration } from './config/config.js'
 
@@ -13,8 +15,7 @@ import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import serverRoutes from './routes/serverRoutes.js'
 import categoryRoutes from './routes/categoryRoutes.js'
-
-const app = express()
+import friendRequestRoutes from './routes/friendRequestRoutes.js'
 
 // Connecting to DB
 ConnectDB()
@@ -43,6 +44,8 @@ app.use('/api/server', serverRoutes)
 
 app.use('/api/category', categoryRoutes)
 
-app.listen(configuration.PORT, ()=>{
+app.use('/api/friendrequest', friendRequestRoutes)
+
+httpServer.listen(configuration.PORT, ()=>{
     console.log(`Server is running at http://localhost:${configuration.PORT}`)
 })
