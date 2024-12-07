@@ -522,7 +522,6 @@ export const GetAllFriends = async (req, res) => {
     if (allFriends.length === user.friends.length) {
       res.status(200).json({ ok: true, msg: "All Friends", data: allFriends });
     }
-    res.status(200).json({ ok: true, msg: "All Friends", data: allFriends });
   } catch (error) {
     if (configuration.IS_DEV_ENV) {
       console.log("Error in GetAllFriends Controller\n" + error);
