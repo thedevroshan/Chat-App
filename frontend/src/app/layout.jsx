@@ -3,8 +3,10 @@ import "./globals.css";
 
 import { ScreenSupportProvider } from "./contexts/useScreenSupported";
 import { UserInfoProvider } from "./contexts/useUserInfo";
-import { ServerInfoProvider } from "./contexts/useServerInfo";
 import { SocketContextProvider } from "./contexts/useSocketContext";
+
+// Components
+import Search from "./components/Search";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -22,11 +24,10 @@ export default function RootLayout({ children }) {
       <ScreenSupportProvider>
         <UserInfoProvider>
           <SocketContextProvider>
-            <ServerInfoProvider>
               <body className={`antialiased flex items-center vsc-initialized`}>
+                <Search />
                 {children}
               </body>
-            </ServerInfoProvider>
           </SocketContextProvider>
         </UserInfoProvider>
       </ScreenSupportProvider>

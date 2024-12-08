@@ -11,7 +11,8 @@ import { useScreenSupport } from '@/app/contexts/useScreenSupported'
 // API
 
 
-const ChatHome = () => { 
+const ChatHome = ({params}) => { 
+  const router = React.use(params)
   const isSupported = useScreenSupport()
 
   return (
@@ -19,7 +20,7 @@ const ChatHome = () => {
     {isSupported && 
     <>
       <Navbar/>
-      <ChatBox/>
+      <ChatBox userId={router.userId}/>
       <ChatBoxDetailPanel/>
     </>
     }

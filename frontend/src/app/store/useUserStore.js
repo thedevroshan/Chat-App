@@ -9,6 +9,7 @@ const useUserStore = create((set) => ({
     bio: "",
     friends: [""],
     links: [{}],
+    requested: [],
     setUser: (user) => {
         set(()=>({
             _id: user._id,
@@ -18,6 +19,7 @@ const useUserStore = create((set) => ({
             profile_pic: user.profile_pic,
             bio: user.bio,
             links: user.links,
+            requested: user.requested
         }))
     },
     setUsername: (username) => {
@@ -50,6 +52,11 @@ const useUserStore = create((set) => ({
             friends
         }))
     },
+    setRequested: (requested) => {
+        set(()=>({
+            requested
+        }))
+    }
 }))
 
 export default useUserStore

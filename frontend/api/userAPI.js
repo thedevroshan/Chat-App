@@ -248,3 +248,27 @@ export const GetAllFriendsAPI = async () => {
   }
 };
 
+export const SearchAPI = async (username) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/search/${username}`,
+      {
+        method: "GET",
+        credentials: 'include',
+      }
+    );
+
+    const res = await response.json();
+    const newRes = {
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
+      data: res.data?res.data:''
+    };
+    return newRes;
+  } catch (error) {
+    console.warn("Something went wrong", error);
+  }
+};
+
+
