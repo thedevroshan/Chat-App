@@ -85,12 +85,10 @@ export const ChangeEmailRequest = async (req, res) => {
     );
 
     if (!isSent) {
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          msg: "Sorry, There is some problem to send otp. Please try again later",
-        });
+      return res.status(400).json({
+        ok: false,
+        msg: "Sorry, There is some problem to send otp. Please try again later",
+      });
     }
 
     res.status(200).json({ ok: true, msg: "OTP Sent" });
@@ -292,12 +290,10 @@ export const ResetPassword = async (req, res) => {
     }
 
     if (req.body.password !== req.body.confirm_password) {
-      return res
-        .status(400)
-        .json({
-          ok: false,
-          msg: "Password and Confirm Password must be same.",
-        });
+      return res.status(400).json({
+        ok: false,
+        msg: "Password and Confirm Password must be same.",
+      });
     }
 
     const salt = await bcrypt.genSalt(configuration.SALT_LENGTH);
@@ -525,6 +521,24 @@ export const GetAllFriends = async (req, res) => {
   } catch (error) {
     if (configuration.IS_DEV_ENV) {
       console.log("Error in GetAllFriends Controller\n" + error);
+    } else {
+      res.status(500).json({ ok: false, msg: "Internal Server Error" });
+    }
+  }
+};
+
+export const Search = async (req, res) => {
+  try {
+    const isSearchedUserExists = await User.findOne({username: req.params.username}).select('-password')
+
+    if(!isSearchedUserExists){
+      return res.status(404).json({ok: false, msg: 'User Not Found'})
+    }
+
+    res.status(200).json({ok: true,msg:'User Found', data: [isSearchedUserExists]})
+  } catch (error) {
+    if (configuration.IS_DEV_ENV) {
+      console.log("Error in Search Controller\n" + error);
     } else {
       res.status(500).json({ ok: false, msg: "Internal Server Error" });
     }

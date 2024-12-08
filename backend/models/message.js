@@ -20,9 +20,13 @@ const messageSchema = new Schema({
         type: String,
         default: '',
     },
-    attachment: {
+    file: {
         type: String,
         default: ''
+    },
+    date: {
+        type: String,
+        required: true,
     }
 }, {timestamps: true})
 
