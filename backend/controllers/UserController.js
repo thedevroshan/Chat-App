@@ -15,6 +15,7 @@ import { ValidateOTP } from "../utils/ValidateOTP.js";
 // Appwrite
 import { storage } from "../config/appwrite.js";
 import { InputFile } from "node-appwrite/file";
+import { socketIO, GetUserSocketId } from "../socket/socket.js";
 
 export const GetUserInfo = async (req, res) => {
   try {
@@ -544,3 +545,31 @@ export const Search = async (req, res) => {
     }
   }
 };
+
+export const GetLastActive = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId)
+    if(!user){
+      return res.status(404).json({ok: false,msg: 'User Not Found'})
+    }
+
+    const minutes = (Date.now() - parseInt(user.lastActive))/60000
+    if(Math.round(minutes/60) >= 48 && Math.round(minutes/60) != 0){
+      return res.status(200).json({ok: true, msg: 'Last Active', data: (Math.round(minutes/60))/24 + 'days ago'})
+    }
+    else if(Math.round(minutes/60) >= 24 && Math.round(minutes/60) != 0){
+      return res.status(200).json({ok: true, msg: 'Last Active', data: 'Yesterday'})
+    } 
+    else if(Math.round(minutes/60) < 24 && Math.round(minutes/60) != 0) {
+      return res.status(200).json({ok: true, msg: 'Last Active', data: Math.round(minutes/60) + 'h ago'})
+    }
+    res.status(200).json({ok: true, msg: 'Last Active', data: Math.round(minutes) != 0?Math.round(minutes) + 'm ago':''})
+  } catch (error) {
+    if (configuration.IS_DEV_ENV) {
+      console.log("Error in GetLastActive Controller\n" + error);
+    } else {
+      res.status(500).json({ ok: false, msg: "Internal Server Error" });
+    }
+  }
+};
+

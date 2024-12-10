@@ -9,7 +9,10 @@ import NotSupportedPage from "./components/NotSupportedPage";
 import { useScreenSupport } from "./contexts/useScreenSupported";
 
 // API
-import { IsLoggedInAPI } from "../../api/userAPI";
+import { 
+  IsLoggedInAPI,
+  SetLastActiveAPI
+ } from "../../api/userAPI";
 
 export default function Home() {
   const [isRegisterComponentActive, setRegisterComponentActive] =
@@ -38,6 +41,7 @@ export default function Home() {
     }
     window.location.pathname = '/chat_home'
   };
+
 
   useEffect(() => {
     StayOnHomePage();

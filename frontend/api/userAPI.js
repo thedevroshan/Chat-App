@@ -1,3 +1,26 @@
+export const GetLastActiveAPI = async (userId) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/getlastactive/${userId}`,
+      {
+        credentials: "include",
+        method: "GET",
+      }
+    );
+
+    const res = await response.json();
+    const newRes = {
+      ok: res.ok?res.ok:false,
+      msg: res.msg?res.msg:'',
+      statusCode: response.status?response.status:'',
+      data: res.data?res.data:''
+    };
+    return newRes;
+  } catch (error) {
+    console.warn("Something went wrong", error);
+  }
+};
+
 export const GetUserInfoAPI = async () => {
   try {
     const response = await fetch(

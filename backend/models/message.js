@@ -11,22 +11,25 @@ const messageSchema = new Schema({
         ref: 'User',
         required: true
     },
-    message_type: {
-        type: String,
-        enum: ['text','document','media'],
-        required: true
+    replied_to: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
     },
     message: {
         type: String,
-        default: '',
+        required: true
     },
     file: {
         type: String,
         default: ''
     },
-    date: {
+    conversation_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
+    time: {
         type: String,
-        required: true,
+        required: true
     }
 }, {timestamps: true})
 

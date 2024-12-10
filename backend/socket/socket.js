@@ -5,6 +5,9 @@ import http from 'http'
 // config
 import { configuration } from '../config/config.js'
 
+// Controllers
+import { SetLastActive } from '../SocketControllers/UserController.js'
+
 const app = express()
 
 const httpServer = http.createServer(app)
@@ -29,6 +32,9 @@ socketIO.on("connection", (socket) => {
 	socketIO.emit("getOnlineUsers", Object.keys(userSocketMap));
 
 	socket.on("disconnect", () => {
+		// Setting the user last active time before removing it from the online user map
+		SetLastActive(userId, userSocketMap[userId], socketIO)
+		
 		delete userSocketMap[userId];
 		socketIO.emit("getOnlineUsers", Object.keys(userSocketMap));
 	});

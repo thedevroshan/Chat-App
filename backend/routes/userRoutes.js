@@ -24,7 +24,8 @@ import {
     RemoveLink,
     GetOtherUserInfo,
     GetAllFriends,
-    Search
+    Search,
+    GetLastActive
 } from '../controllers/UserController.js'
 
 // Utils
@@ -43,6 +44,8 @@ router.get('/getotheruserinfo/:userId',isLoggedIn, GetOtherUserInfo)
 router.get('/allfriends',isLoggedIn, GetAllFriends)
 
 router.get('/search/:username',isLoggedIn, Search)
+
+router.get('/getlastactive/:userId',isLoggedIn, GetLastActive)
 
 router.put('/changeemailrequest',isLoggedIn, ChangeEmailRequest)
 

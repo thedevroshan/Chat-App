@@ -4,6 +4,7 @@ import { configuration } from "../config/config.js";
 // Models
 import { User } from "../models/user.js";
 import { FriendRequest } from "../models/friendRequest.js";
+import {ConversationId} from '../models/conversationId.js'
 
 // Socket
 import { socketIO, GetUserSocketId } from "../socket/socket.js";
@@ -165,6 +166,12 @@ export const AcceptFriendRequest = async (req, res) => {
         .json({ ok: false, msg: "Unable To Accept Friend Request!" });
     }
 
+    const isCreated = await ConversationId.create({
+      users: [req.user.id, req.friendRequest.from]
+    })
+    if(!isCreated){
+      return res.status(400).json({ok: false,msg:'Unable to accept friend request'})
+    }
     res.status(200).json({ ok: true, msg: "Friend Request Accepted" });
   } catch (error) {
     if (configuration.IS_DEV_ENV) {

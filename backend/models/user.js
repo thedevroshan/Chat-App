@@ -68,6 +68,10 @@ const userSchema = new Schema({
     requested: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'FriendRequest'
+    },
+    lastActive: {
+        type: String,
+        default: ''
     }
 }, {timestamps: true})
 

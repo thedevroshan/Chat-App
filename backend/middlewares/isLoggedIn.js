@@ -1,5 +1,6 @@
 import { configuration } from '../config/config.js'
 import jwt from 'jsonwebtoken'
+import { User } from '../models/user.js'
 
 export const isLoggedIn = async (req, res, next) => {
     try {
@@ -11,6 +12,10 @@ export const isLoggedIn = async (req, res, next) => {
         const verified_token = await jwt.verify(jwt_token, configuration.JWT_SECRET)
         if(!verified_token){
             return res.status(400).json({ok: false, msg: 'Invalid Token'})
+        }
+        
+        if(!await User.findById(verified_token.userId)){
+            return res.status(404).json({ok: false, msg: 'User Not Found'})
         }
 
         if(!req.user){

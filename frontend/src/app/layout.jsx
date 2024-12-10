@@ -18,6 +18,7 @@ export const metadata = {
   description: "More than a chatting app",
 };
 
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

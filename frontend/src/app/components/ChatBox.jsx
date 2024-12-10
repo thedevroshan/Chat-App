@@ -12,16 +12,22 @@ import useUserStore from "../store/useUserStore";
 import { useSocket } from "../contexts/useSocketContext";
 
 // API
-import { SendMessageAPI } from "../../../api/messageAPI";
+import { SendMessageAPI, GetAllMessagesAPI } from "../../../api/messageAPI";
+import { GetLastActiveAPI } from "../../../api/userAPI";
 
 const ChatBox = ({ userId }) => {
+  let count;
+
   // User Store
   const myId = useUserStore((state) => state._id);
 
+  // States
   const [isOnline, setOnline] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessages] = useState("");
+  const [lastActive, setLastActive] = useState("");
+  const [messages, setMessages] = useState([{ Today: [] }]);
+  const [newMessage, setNewMessage] = useState({ message: "", file: "" });
 
+  // Filtering out the friend whom user is talking. So that user can see user's details at the top of chatbox
   const friends = useUserStore((state) => state.friends);
   const currentFriendDMDetails = friends.filter(
     (friend) => friend._id == userId
@@ -30,6 +36,42 @@ const ChatBox = ({ userId }) => {
   // Socket
   const { onlineUser, socket } = useSocket();
 
+
+  const GetLastActive = async () => {
+    const res = await GetLastActiveAPI(userId);
+    if (!res.ok) {
+      console.log(res.msg);
+      return;
+    }
+    setLastActive(res.data);
+  };
+
+  const SendMessage = async (e) => {
+    if (e.key == "Enter" || e.target.id == "send-message" && newMessage != '') {
+      const res = await SendMessageAPI(newMessage, userId);
+      if (!res.ok) {
+        console.log(res.msg);
+        return;
+      }
+      setMessages([{ Today: [...messages[0].Today, res.data] }]);
+      console.log(messages)
+      setNewMessage({ message: "", file: "" });
+    }
+  };
+
+  const GetAllMessages = async () => {
+    const res = await GetAllMessagesAPI(userId)
+    if(!res.ok){
+      console.log(res.msg)
+      return
+    }
+    const newMessagesArray = res.data.filter(day => {
+      const key = Object.keys(day)[0]
+      return day[key].length != 0
+    })
+    setMessages(newMessagesArray)
+  }
+
   useEffect(() => {
     if (currentFriendDMDetails[0]) {
       setOnline(onlineUser.includes(currentFriendDMDetails[0]._id));
@@ -37,32 +79,23 @@ const ChatBox = ({ userId }) => {
     return () => {};
   }, [onlineUser]);
 
-  const SendMessage = async (e) => {
-    const date = new Date();
-    const newDate = date.getHours() + ":" + date.getMinutes();
-
-    if (e.key == "Enter" || e.target.id == "send-message") {
-      if (newMessage !== "") {
-        const res = await SendMessageAPI(newMessage, newDate, userId);
-        if (!res.ok) {
-          console.log(res.msg);
-          return;
-        }
-        setMessages((prevMessage) => [
-          ...prevMessage,
-          { message: newMessage, date: newDate },
-        ]);
-        setNewMessages("");
-        // Auto Scroll
-      }
-    }
-  };
+  useEffect(() => {
+    GetLastActive();
+    GetAllMessages()
+    return () => {};
+  }, []);
 
   useEffect(() => {
     if (socket) {
       socket.on("newMessage", (message) => {
-        setMessages((prevMessage) => [...prevMessage, message]);
-        // AutoScroll
+        setMessages(prevMessages => [
+          {
+            Today: [
+              ...prevMessages[0].Today,  // Spread the previous messages
+              message                     // Add the new message
+            ]
+          }
+        ])
       });
     }
     return () => {
@@ -92,7 +125,11 @@ const ChatBox = ({ userId }) => {
                 {currentFriendDMDetails[0].name}
               </span>
               <span className="text-white font-semibold text-sm">
-                {isOnline ? "Online" : "Offline"}
+                {isOnline
+                  ? "Active Now"
+                  : lastActive != ""
+                  ? `Active ${lastActive}`
+                  : ""}
               </span>
             </div>
           </>
@@ -104,16 +141,20 @@ const ChatBox = ({ userId }) => {
         id="chat-section"
         className="w-full h-full gap-4 flex flex-col px-4 py-2 overflow-x-hidden overflow-y-scroll"
       >
-        {messages &&
-          messages.map((message, index) => (
-            <Message
-              key={index}
-              message={message.message}
-              date={message.date}
-              userId={message.sender ? message.sender : myId}
-              myId={myId}
-            />
-          ))}
+        {messages.map((days) => (
+          <section
+            className="bg-transparent w-full h-fit flex flex-col gap-3"
+            key={Object.keys(days)[0]}
+          >
+            <span className="text-secondary-text select-none bg-background px-3 py-1 font-semibold rounded-md text-lg block w-fit mx-auto text-center">
+              {Object.keys(days)[0]}
+            </span>
+
+            {days[Object.keys(days)[0]].map((message) => (
+              <Message key={message._id} message={message} myId={myId}/>
+            ))}
+          </section>
+        ))}
       </section>
 
       <section
@@ -125,18 +166,18 @@ const ChatBox = ({ userId }) => {
             type="text"
             className="h-full w-full rounded-xl bg-background placeholder:text-secondary-text px-3 text-lg text-white outline-none border-r border-border"
             placeholder="Message..."
-            onKeyDown={SendMessage}
-            value={newMessage}
+            value={newMessage.message}
             onChange={(e) => {
-              setNewMessages(e.target.value);
+              setNewMessage({ message: e.target.value });
             }}
+            onKeyDown={SendMessage}
           />
           <img
             src="/send-icon.png"
             alt="Send"
             className="w-9 h-9 aspect-square hover:bg-primary-nav-hover px-2 py-2 rounded-md cursor-pointer"
-            onClick={SendMessage}
             id="send-message"
+            onClick={SendMessage}
           />
           <img
             src="/attachment-icon.png"
