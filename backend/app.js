@@ -50,5 +50,5 @@ app.use('/api/friendrequest', friendRequestRoutes)
 app.use('/api/message', messageRoutes)
 
 httpServer.listen(configuration.PORT, ()=>{
-    console.log(`Server is running at http://localhost:${configuration.PORT}`)
+    console.log(`Server is running on ${PORT}`)
 })
