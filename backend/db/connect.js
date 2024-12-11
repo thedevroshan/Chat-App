@@ -10,6 +10,6 @@ export const ConnectDB = async () => {
             console.log(error)
             return;
         }
-        console.log('Some error occurred')
+        console.log('Some error occurred during connecting with database')
     }
 }
