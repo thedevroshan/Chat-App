@@ -12,9 +12,12 @@ export const ConnectDB = async () => {
     await mongoose.connect(configuration.MONGODB, clientOptions);
     await mongoose.connection.db.admin().command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await mongoose.disconnect();
+  }catch(error){
+    if(configuration.IS_DEV_ENV){
+        console.log('Error in Register Function\n'+error)
+    }
+    else {
+        console.log('Unable to connect with database')
+    }
   }
 }
-run().catch(console.dir);
