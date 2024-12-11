@@ -381,10 +381,10 @@ const Account = () => {
                     : "We will send you a OTP to change your email."}
                 </span>
                 <Button
-                  variant={"primary-loader-full"}
-                  children={"Send OTP Request"}
+                  variant="primary-loader-full"
+                  btnText="Send OTP Request"
                   disableOn={isBtnDisable}
-                  onDisableChildren={"Wait...."}
+                  onDisableChildren="Wait...."
                   onClick={() => {
                     ChangeEmailRequest();
                   }}
@@ -412,10 +412,10 @@ const Account = () => {
                   />
 
                   <Button
-                    variant={"primary-loader-full"}
-                    children={"Change Email"}
+                    variant="primary-loader-full"
+                    btnText="Change Email"
                     disableOn={isBtnDisable}
-                    onDisableChildren={"Wait...."}
+                    onDisableChildren="Wait...."
                     onClick={ChangeEmail}
                   />
                 </div>
@@ -436,10 +436,10 @@ const Account = () => {
                 />
 
                 <Button
-                  variant={"primary-loader-full"}
-                  children={"Verify Email"}
+                  variant="primary-loader-full"
+                  btnText="Verify Email"
                   disableOn={isBtnDisable}
-                  onDisableChildren={"Wait...."}
+                  onDisableChildren="Wait...."
                   onClick={VerifyEmail}
                 />
               </div>

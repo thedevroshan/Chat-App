@@ -95,7 +95,7 @@ const Verify = () => {
       <div className="lg:w-[400px] sm:w-[70vw] md:w-full w-full px-6">
         <Button
           variant="primary-loader-full"
-          children="VERIFY"
+          btnText="VERIFY"
           onClick={HandleVerification}
           disableOn={isLoading}
           onDisableChildren="Wait..."

@@ -58,14 +58,14 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
           <>
             {" "}
             <Button
-              variant={"primary-full"}
-              children={"ACCEPT"}
+              variant="primary-full"
+              btnText="ACCEPT"
               onClick={AcceptFriendRequest}
             />
             <Button
-              variant={"secondary-full"}
-              children={"DECLINE"}
-              textColor={"text-white"}
+              variant="secondary-full"
+              btnText="DECLINE"
+              textColor="text-white"
               onClick={DeclineFriendRequest}
             />
           </>

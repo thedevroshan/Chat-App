@@ -130,11 +130,11 @@ const Register = ({ onClick }) => {
 
           <div className="lg:w-[400px] sm:w-[70vw] md:w-full w-full px-6">
             <Button
-              variant={"primary-loader-full"}
-              children={"REGISTER"}
+              variant="primary-loader-full"
+              btnText="REGISTER"
               onClick={HandleSubmit}
               disableOn={isLoading}
-              onDisableChildren={"Wait..."}
+              onDisableChildren="Wait..."
             ></Button>
           </div>
         </div>

@@ -70,15 +70,15 @@ const Profile = () => {
 
             <div className="flex w-full flex-col gap-2">
               <Button
-                variant={"primary-full"}
-                children={"CHANGE PROFILE PIC"}
+                variant="primary-full"
+                btnText="CHANGE PROFILE PIC"
                 onClick={()=>{setProfilePicture(true)}}
-                name={"profilepic-button"}
+                name="profilepic-button"
               />
               <Button
-                variant={"secondary-full"}
-                children={"REMOVE"}
-                textColor={"text-white"}
+                variant="secondary-full"
+                btnText="REMOVE"
+                textColor="text-white"
                 onClick={RemoveProfilePic}
               />
             </div>
@@ -134,11 +134,11 @@ const Profile = () => {
             </div>
 
             <Button
-              variant={"primary-loader-full"}
-              children={isReadOnly ? "EDIT" : "SAVE"}
+              variant="primary-loader-full"
+              btnText={isReadOnly ? "EDIT" : "SAVE"}
               onClick={UpdateProfile}
               disableOn={isLoading}
-              onDisableChildren={"Wait..."}
+              onDisableChildren="Wait..."
             />
           </div>
         </div>

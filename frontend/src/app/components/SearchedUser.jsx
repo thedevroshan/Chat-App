@@ -16,7 +16,7 @@ const SearchedUser = ({ username, name, profilePic, userId, isRequested }) => {
 
   // User Store
   const friends = useUserStore((state) => state.friends);
-  const myId = useUserStore((state) => state._id);
+  const myId = useUserStore((state) => state._id)
 
 
 
@@ -56,18 +56,18 @@ const SearchedUser = ({ username, name, profilePic, userId, isRequested }) => {
 
       {!isFriend && userId != myId && !hasRequested && (
         <Button
-          variant={"primary"}
-          children={"Add Friend"}
-          customSytle={"w-[35vh]"}
+          variant="primary"
+          btnText="Add Friend"
+          customSytle="w-[35vh]"
           onClick={AddFriend}
         />
       )}
 
       {hasRequested && (
         <Button
-          variant={"secondary"}
-          children={"Requested"}
-          customSytle={"w-[35vh]"}
+          variant="secondary"
+          btnText="Requested"
+          customSytle="w-[35vh]"
         />
       )}
     </div>

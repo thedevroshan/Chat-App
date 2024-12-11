@@ -64,12 +64,12 @@ export default function Home() {
                 <div className="flex gap-4">
                   <Button
                     variant="primary"
-                    children="LOGIN"
+                    btnText="LOGIN"
                     onClick={SwitchAuthComponent}
                   ></Button>
                   <Button
                     variant="secondary"
-                    children="REGISTER"
+                    btnText="REGISTER"
                     onClick={SwitchAuthComponent}
                   ></Button>
                 </div>

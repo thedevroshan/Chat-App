@@ -165,11 +165,11 @@ const Login = ({ onClick }) => {
 
           <div className="lg:w-[400px] sm:w-[70vw] md:w-full w-full px-6">
             <Button
-              variant={"primary-loader-full"}
-              children={"LOGIN"}
+              variant="primary-loader-full"
+              btnText="LOGIN"
               onClick={HandleLogin}
               disableOn={isLoading}
-              onDisableChildren={"Wait..."}
+              onDisableChildren="Wait..."
             ></Button>
           </div>
         </div>
@@ -205,11 +205,11 @@ const Login = ({ onClick }) => {
 
           <div className="lg:w-[400px] sm:w-[70vw] md:w-full w-full px-6">
             <Button
-              variant={"primary-loader-full"}
-              children={"SEND OTP"}
+              variant="primary-loader-full"
+              btnText="SEND OTP"
               onClick={HandleForgotPassword}
               disableOn={isLoading}
-              onDisableChildren={"Wait..."}
+              onDisableChildren="Wait..."
             ></Button>
           </div>
         </div>
@@ -265,11 +265,11 @@ const Login = ({ onClick }) => {
 
         <div className="lg:w-[400px] sm:w-[70vw] md:w-full w-full px-6">
           <Button
-            variant={"primary-loader-full"}
-            children={"RESET PASSWORD"}
+            variant="primary-loader-full"
+            btnText="RESET PASSWORD"
             onClick={HandleResetPassword}
             disableOn={isLoading}
-            onDisableChildren={"Wait..."}
+            onDisableChildren="Wait..."
           ></Button>
         </div>
       </div>

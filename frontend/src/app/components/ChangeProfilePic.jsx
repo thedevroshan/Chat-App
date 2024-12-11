@@ -82,8 +82,8 @@ const ChangeProfilePic = ({ setProfilePicture }) => {
           <div className="w-full h-fit flex gap-4">
             {isImageSelected && (
               <Button
-                variant={"primary-loader-full"}
-                children={"Upload"}
+                variant="primary-loader-full"
+                btnText="Upload"
                 disableOn={isLoading}
                 onDisableChildren={isLoading ? "Wait..." : "Upload"}
                 onClick={UploadProfilePic}
@@ -91,16 +91,16 @@ const ChangeProfilePic = ({ setProfilePicture }) => {
             )}
             {!isImageSelected && (
               <Button
-                variant={"primary-loader-full"}
-                children={"Upload"}
+                variant="primary-loader-full"
+                btnText="Upload"
                 disableOn={true}
-                onDisableChildren={"Upload"}
+                onDisableChildren="Upload"
               />
             )}
             <Button
-              variant={"secondary-full"}
-              children={"Cancel"}
-              textColor={"text-white"}
+              variant="secondary-full"
+              btnText="Cancel"
+              textColor="text-white"
               onClick={() => {
                 setProfilePicture(false);
               }}
