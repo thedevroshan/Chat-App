@@ -1,15 +1,20 @@
-import mongoose from "mongoose";
-import { configuration } from "../config/config.js";
+import mongoose from 'mongoose'
 
-export const ConnectDB = async () => {
-    try {
-        await mongoose.connect(configuration.MONGODB);
-        console.log('Connected to database')
-    } catch (error) {
-        if(configuration.IS_DEV_ENV){
-            console.log(error)
-            return;
-        }
-        console.log('Some error occurred during connecting with database')
-    }
+// config
+import {configuration} from '../config/config.js'
+
+
+const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
+
+const ConnectDB = async () => {
+  try {
+    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
+    await mongoose.connect(configuration.MONGODB, clientOptions);
+    await mongoose.connection.db.admin().command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await mongoose.disconnect();
+  }
 }
+run().catch(console.dir);
