@@ -76,9 +76,9 @@ const Verify = () => {
 
       <div className="lg:w-[400px] sm:w-[70vw] md:w-full w-full flex flex-col px-6 gap-2 items-center">
         <Input
-          varient={"primary-full"}
-          placeholder={"OTP"}
-          name={"otp"}
+          varient="primary-full"
+          placeholder="OTP"
+          name="otp"
           value={otpForm.otp}
           onChange={HandleChange}
         />
@@ -94,11 +94,11 @@ const Verify = () => {
 
       <div className="lg:w-[400px] sm:w-[70vw] md:w-full w-full px-6">
         <Button
-          variant={"primary-loader-full"}
-          children={"VERIFY"}
+          variant="primary-loader-full"
+          children="VERIFY"
           onClick={HandleVerification}
           disableOn={isLoading}
-          onDisableChildren={"Wait..."}
+          onDisableChildren="Wait..."
         ></Button>
       </div>
     </div>

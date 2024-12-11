@@ -11,7 +11,6 @@ import { useScreenSupport } from "./contexts/useScreenSupported";
 // API
 import { 
   IsLoggedInAPI,
-  SetLastActiveAPI
  } from "../../api/userAPI";
 
 export default function Home() {
@@ -64,13 +63,13 @@ export default function Home() {
                 </p>
                 <div className="flex gap-4">
                   <Button
-                    variant={"primary"}
-                    children={"LOGIN"}
+                    variant="primary"
+                    children="LOGIN"
                     onClick={SwitchAuthComponent}
                   ></Button>
                   <Button
-                    variant={"secondary"}
-                    children={"REGISTER"}
+                    variant="secondary"
+                    children="REGISTER"
                     onClick={SwitchAuthComponent}
                   ></Button>
                 </div>
