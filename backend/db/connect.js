@@ -17,7 +17,7 @@ export const ConnectDB = async () => {
         console.log('Error in Register Function\n'+error)
     }
     else {
-        console.log('Unable to connect with database', error)
+        console.log('Unable to connect with database')
     }
   }
 }
