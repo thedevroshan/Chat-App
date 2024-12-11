@@ -24,7 +24,7 @@ const ChatBox = ({ userId }) => {
   // States
   const [isOnline, setOnline] = useState(false);
   const [lastActive, setLastActive] = useState("");
-  const [messages, setMessages] = useState([{ Today: [] }]);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState({ message: "", file: "" });
 
   // Filtering out the friend whom user is talking. So that user can see user's details at the top of chatbox
@@ -47,14 +47,22 @@ const ChatBox = ({ userId }) => {
   };
 
   const SendMessage = async (e) => {
+
     if (e.key == "Enter" || e.target.id == "send-message" && newMessage != '') {
       const res = await SendMessageAPI(newMessage, userId);
       if (!res.ok) {
         console.log(res.msg);
         return;
       }
-      setMessages([{ Today: [...messages[0].Today, res.data] }]);
-      console.log(messages)
+      setMessages((prevState) => 
+        prevState.map((item) => {
+          if(Object.keys(item) == 'Today'){
+            return { ...item, Today: [...item.Today, res.data] }
+          }else {
+            return item
+          }
+        })
+      );
       setNewMessage({ message: "", file: "" });
     }
   };
@@ -69,7 +77,12 @@ const ChatBox = ({ userId }) => {
       const key = Object.keys(day)[0]
       return day[key].length != 0
     })
-    setMessages(newMessagesArray)
+    if(Object.keys(newMessagesArray[newMessagesArray.length - 1])[0] !== 'Today'){
+      setMessages([...newMessagesArray, {Today: []}])
+    }
+    else {
+      setMessages([...newMessagesArray])
+    }
   }
 
   useEffect(() => {
@@ -91,7 +104,7 @@ const ChatBox = ({ userId }) => {
         setMessages(prevMessages => [
           {
             Today: [
-              ...prevMessages[0].Today,  // Spread the previous messages
+              ...prevMessages[message.length - 1].Today,  // Spread the previous messages
               message                     // Add the new message
             ]
           }
