@@ -6,7 +6,7 @@ import {configuration} from '../config/config.js'
 
 const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
 
-const ConnectDB = async () => {
+export const ConnectDB = async () => {
   try {
     // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
     await mongoose.connect(configuration.MONGODB, clientOptions);
