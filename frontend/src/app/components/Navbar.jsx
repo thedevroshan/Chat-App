@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 // Components
 import SGDMCard from "./SGDMCard";
@@ -29,11 +30,11 @@ const Navbar = () => {
   const isSearch = useAppStore((state) => state.isSearch);
   const setSearch = useAppStore((state) => state.setSearch);
   const setSearching = useAppStore((state) => state.setSearching);
+  const navbarListOption = useAppStore((state) => state.navbarListOption);
+  const setNavbarListOption = useAppStore((state) => state.setNavbarListOption);
 
   // States
-  const [isDirectMessageTab, setDirectMessageTab] = useState(false);
-  const [isServerTab, setServerTab] = useState(true);
-  const [isGroupsTab, setGroupsTab] = useState(false);
+  const [isSmallListOption, setSmallListOption] = useState(false);
 
   const NavLinks = [
     {
@@ -63,37 +64,29 @@ const Navbar = () => {
     },
   ];
 
-  const ActiveMessageTabs = (e) => {
-    const tab = e.target.innerHTML
-    setServerTab(tab === 'SERVERS')
-    setGroupsTab(tab === 'GROUPS')
-    setDirectMessageTab(tab === 'DIRECT MESSAGE')
+  const GetAllFriends = async () => {
+    const res = await GetAllFriendsAPI();
+    if (!res.ok) {
+      console.log(res.msg);
+      return;
+    }
+    setFriends(res.data);
   };
 
-  const GetAllFriends = async () => {
-    const res = await GetAllFriendsAPI()
-    if(!res.ok){
-      console.log(res.msg)
-      return
-    }
-    setFriends(res.data)
-  }
-
   const GetAllServers = async () => {
-    const res = await GetUserServersAPI()
-    if(!res.ok){
-      console.warn('Something went wrong', res.msg)
-      return
+    const res = await GetUserServersAPI();
+    if (!res.ok) {
+      console.warn("Something went wrong", res.msg);
+      return;
     }
-    setServer(res.data)
-  }
+    setServer(res.data);
+  };
 
   useEffect(() => {
-    GetAllFriends()
-    GetAllServers()
-    return () => {
-    }
-  }, [])
+    GetAllFriends();
+    GetAllServers();
+    return () => {};
+  }, []);
 
   return (
     <nav className="hidden sm:flex xl:w-[24vw] bg-background w-[6vw] h-[100vh] flex-col select-none gap-2 items-center">
@@ -119,14 +112,15 @@ const Navbar = () => {
         {/* Visible on xl(1280px) or bigger screens  */}
         <div className="flex-col w-full h-fit gap-1 hidden xl:flex">
           {/* Search Button */}
-          <div className="flex items-center justify-start gap-3 hover:bg-primary-nav-hover group py-1 px-1 cursor-pointer transition-all rounded-lg" onClick={()=>{
-            setSearch(!isSearch)
-            setSearching(false)
-          }}>
-            <img src="/search-icon.png" alt="search" className="xl:w-6"/>
-            <button
-              className="hidden xl:block text-lg font-semibold transition-all group-hover:text-white"
-            >
+          <div
+            className="flex items-center justify-start gap-3 hover:bg-primary-nav-hover group py-1 px-1 cursor-pointer transition-all rounded-lg"
+            onClick={() => {
+              setSearch(!isSearch);
+              setSearching(false);
+            }}
+          >
+            <img src="/search-icon.png" alt="search" className="xl:w-6" />
+            <button className="hidden xl:block text-lg font-semibold transition-all group-hover:text-white">
               Search
             </button>
           </div>
@@ -155,8 +149,18 @@ const Navbar = () => {
         {/* Visible on smaller than xl(1280px) screens */}
         <div className="flex-col w-full h-fit gap-3 items-center flex xl:hidden">
           {/* Search Button */}
-          <div className="">
-            <img src="/search-icon.png" alt="search" className="" />
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              setSearch(!isSearch);
+              setSearching(false);
+            }}
+          >
+            <img
+              src="/search-icon.png"
+              alt="search"
+              className="w-12 lg:w-8 md:w-7"
+            />
             <button className="hidden xl:block text-lg font-semibold transition-all group-hover:text-white">
               Search
             </button>
@@ -169,7 +173,7 @@ const Navbar = () => {
                 key={element.name}
                 src={element.icon}
                 alt={element.name}
-                className="w-7"
+                className="w-12 lg:w-8 md:w-7"
               />
             </Link>
           ))}
@@ -178,34 +182,106 @@ const Navbar = () => {
 
       {/* Options Header */}
       <div className="w-fit xl:flex xl:gap-2 xl:py-2 xl:px-2 xl:items-center xl:justify-between xl:w-[23vw] border border-border rounded-lg">
-        <img src="/arrow-icon.png" alt="" className="w-6 xl:hidden" />
+        <img
+          src="/arrow-icon.png"
+          alt=""
+          className={`w-6 xl:hidden cursor-pointer transition-all ${
+            isSmallListOption ? "rotate-180" : ""
+          }`}
+          onClick={() => {
+            setSmallListOption(!isSmallListOption);
+          }}
+        />
+
+        <div
+          className={`flex flex-col xl:hidden bg-background border border-border w-56 h-64 absolute md:mx-[6vw] lg:mx-[5vw] mx-[8vw] -mt-4 lg:-mt-6 rounded-xl ${
+            isSmallListOption
+              ? "-translate-x-1 opacity-100"
+              : "-translate-x-8 opacity-0"
+          } transition-all px-2 py-2 gap-2`}
+        >
+          <button
+            className={`w-full h-fit font-semibold py-2 rounded-xl  ${
+              navbarListOption == "servers"
+                ? "text-black bg-white"
+                : "hover:bg-primary-nav-hover text-white"
+            }`}
+            onClick={() => {
+              setNavbarListOption("servers");
+            }}
+          >
+            SERVERS
+          </button>
+
+          <button
+            className={`w-full h-fit font-semibold py-2 rounded-xl  ${
+              navbarListOption == "directMessage"
+                ? "text-black bg-white"
+                : "hover:bg-primary-nav-hover text-white"
+            }`}
+            onClick={() => {
+              setNavbarListOption("directMessage");
+            }}
+          >
+            DIRECT MESSAGE
+          </button>
+
+          <button
+            className={`w-full h-fit font-semibold py-2 rounded-xl  ${
+              navbarListOption == "groups"
+                ? "text-black bg-white"
+                : "hover:bg-primary-nav-hover text-white"
+            }`}
+            onClick={() => {
+              setNavbarListOption("groups");
+            }}
+          >
+            GROUPS
+          </button>
+
+          <div className="hover:bg-primary-nav-hover flex w-full h-fit items-center justify-center py-2 rounded-xl cursor-pointer transition-all">
+            <Image
+              width={32}
+              height={32}
+              alt="Create Button"
+              src={"/create-icon.png"}
+            />
+          </div>
+        </div>
+
         <button
           className={`hidden xl:block xl:text-[10px] xl:font-semibold transition-all xl:text-black xl:px-2 xl:py-1 xl:rounded-md ${
-            isServerTab
+            navbarListOption == "servers"
               ? "xl:bg-white"
               : "hover:bg-primary-nav-hover xl:text-white"
           }`}
-          onClick={ActiveMessageTabs}
+          onClick={() => {
+            setNavbarListOption("servers");
+          }}
         >
           SERVERS
         </button>
         <button
           className={`hidden xl:block xl:text-[10px] xl:font-semibold transition-all xl:px-2 xl:py-1 xl:rounded-md ${
-            isDirectMessageTab
+            navbarListOption == "directMessage"
               ? "xl:bg-white"
               : "hover:bg-primary-nav-hover xl:text-white"
           }`}
-          onClick={ActiveMessageTabs}
+          onClick={() => {
+            setNavbarListOption("directMessage");
+          }}
         >
           DIRECT MESSAGE
         </button>
         <button
           className={`hidden xl:block xl:text-[10px] xl:font-semibold transition-all xl:px-2 xl:py-1 xl:rounded-md ${
-            isGroupsTab
+            navbarListOption == "groups"
               ? "xl:bg-white"
               : "hover:bg-primary-nav-hover xl:text-white"
           }`}
-          onClick={ActiveMessageTabs}
+          onClick={() => {
+            setNavbarListOption("groups");
+          }}
         >
           GROUPS
         </button>
@@ -218,16 +294,19 @@ const Navbar = () => {
 
       {/* List of Servers, Direct Messsage and Groups*/}
       <div className="w-full h-full flex flex-col items-center bg-background overflow-y-scroll overflow-x-hidden scrollbar-hidden">
-        {isServerTab &&
+        {navbarListOption == "servers" &&
           servers.map((server) => (
             <Link href={`/chat_home/server/${server._id}`} key={server._id}>
               <SGDMCard name={server.server_name} icon={server.server_icon} />
             </Link>
           ))}
 
-        {isDirectMessageTab &&
+        {navbarListOption == "directMessage" &&
           friends.map((friend) => (
-            <Link href={`/chat_home/directmessage/${friend._id}`} key={friend._id}>
+            <Link
+              href={`/chat_home/directmessage/${friend._id}`}
+              key={friend._id}
+            >
               <SGDMCard name={friend.name} icon={friend.profile_pic} />
             </Link>
           ))}

@@ -23,7 +23,6 @@ module.exports = {
       screens: {
         'mobile-xsm': '320px'
       }
-      
     },
   },
   plugins: [],

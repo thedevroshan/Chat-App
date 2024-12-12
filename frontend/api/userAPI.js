@@ -271,10 +271,10 @@ export const GetAllFriendsAPI = async () => {
   }
 };
 
-export const SearchAPI = async (username) => {
+export const SearchAPI = async (username_or_name) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/search/${username}`,
+      `${process.env.NEXT_PUBLIC_BACKEND}/api/user/search/${username_or_name}`,
       {
         method: "GET",
         credentials: 'include',

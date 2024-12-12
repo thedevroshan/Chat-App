@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 // Components
 import Message from "./Message";
@@ -26,6 +26,9 @@ const ChatBox = ({ userId }) => {
   const [lastActive, setLastActive] = useState("");
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState({ message: "", file: "" });
+
+  // References
+  const chatBoxRef = useRef()
 
   // Filtering out the friend whom user is talking. So that user can see user's details at the top of chatbox
   const friends = useUserStore((state) => state.friends);
@@ -101,14 +104,13 @@ const ChatBox = ({ userId }) => {
   useEffect(() => {
     if (socket) {
       socket.on("newMessage", (message) => {
-        setMessages(prevMessages => [
-          {
-            Today: [
-              ...prevMessages[message.length - 1].Today,  // Spread the previous messages
-              message                     // Add the new message
-            ]
+        setMessages(prevMessages => prevMessages.map((day) => {
+          if(Object.keys(day) == 'Today'){
+            return {...day, Today: [...day.Today, message]}
+          }else {
+            return day
           }
-        ])
+        }))
       });
     }
     return () => {
@@ -117,6 +119,14 @@ const ChatBox = ({ userId }) => {
       }
     };
   }, [socket]);
+
+  // Auto Scroll
+  useEffect(() => {
+    chatBoxRef.current.scrollBy(0, chatBoxRef.current.scrollHeight * 1)
+    return () => {
+    };
+  }, [messages, []]);
+
 
   return (
     <div className="w-[60vw] xl:w-[52vw] h-[100vh] flex flex-col rounded-tl-3xl rounded-bl-3xl bg-foreground ml-2 pb-4">
@@ -153,6 +163,7 @@ const ChatBox = ({ userId }) => {
       <section
         id="chat-section"
         className="w-full h-full gap-4 flex flex-col px-4 py-2 overflow-x-hidden overflow-y-scroll"
+        ref={chatBoxRef}
       >
         {messages.map((days) => (
           <section

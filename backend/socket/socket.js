@@ -13,7 +13,7 @@ const app = express()
 const httpServer = http.createServer(app)
 const socketIO = new Server(httpServer, {
     cors: {
-        origin: `${configuration.FRONTEND}`,
+		origin: `${configuration.IS_DEV_ENV?configuration.FRONTEND + ":" + configuration.FRONTEND_PORT:configuration.FRONTEND}`,
 		methods: ["GET", "POST"],
     }
 })

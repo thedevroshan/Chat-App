@@ -23,7 +23,7 @@ ConnectDB()
 
 //Cors
 app.use(cors({
-    origin: `${configuration.FRONTEND}`,
+    origin: `${configuration.IS_DEV_ENV?configuration.FRONTEND + ":" + configuration.FRONTEND_PORT:configuration.FRONTEND}`,
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true

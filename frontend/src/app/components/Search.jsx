@@ -55,11 +55,11 @@ const Search = () => {
   return (
     <>
       {isSearch && isSupported && (
-        <div className="absolute flex w-[42vw] items-start justify-center h-[50vh] mx-[30vw] -mt-56">
+        <div className={`absolute flex w-[60vw] items-start justify-center h-[50vh] mx-[20vw] -mt-56 xl:w-[42vw] xl:mx-[30vw]`}>
           <div className="h-full w-[93%] flex flex-col justify-start">
             <input
               type="text"
-              placeholder="Search Username"
+              placeholder="Search"
               className={`h-10 border-l border-t border-b border-border bg-background outline-none px-2 rounded-tl-xl ${
                 isSearching ? "" : "rounded-bl-xl"
               } placeholder:text-secondary-text text-white`}
@@ -87,7 +87,7 @@ const Search = () => {
           <img
             src="/cross-icon.png"
             alt=""
-            className="bg-background px-2 py-2 w-[40px] border border-border rounded-tr-xl rounded-br-xl hover:bg-primary-nav-hover cursor-pointer"
+            className="bg-background px-2 py-2 w-[40px] border border-border rounded-tr-xl rounded-br-xl hover:bg-light-secondary cursor-pointer"
             onClick={() => {
               setSearch(false);
               setSearching(false);

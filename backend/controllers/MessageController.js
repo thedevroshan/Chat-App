@@ -89,8 +89,8 @@ export const GetAllMessages = async (req, res) => {
     const allMessages = await Message.find({ conversation_id });
     if (!allMessages) res.status(400).json({ ok: true, msg: "No Messages" });
 
-    const messagesByTwoDay = [{ Yesterday: [] }, { Today: [] }];
-    const messagesByDay = [
+    let messagesByTwoDay = [{ Yesterday: [] }, { Today: [] }];
+    let messagesByDay = [
       { Sun: [] },
       { Mon: [] },
       { Tue: [] },
@@ -99,7 +99,7 @@ export const GetAllMessages = async (req, res) => {
       { Fri: [] },
       { Sat: [] },
     ];
-    const messagesByDate = [];
+    let messagesByDate = [];
 
     allMessages.forEach((message) => {
       const createdTime = message.createdAt;
@@ -117,19 +117,13 @@ export const GetAllMessages = async (req, res) => {
         } else if (isInWeek == 1) {
           messagesByTwoDay[0].Yesterday.push(message);
         } else if (isInWeek >= 2) {
-          const dayObject = messagesByDay.find(day => day.hasOwnProperty(createdDay))
-          dayObject[createdDay].push(message)
-          messagesByDay = [...messagesByDay, dayObject]
+          let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          let day = days.findIndex(day => day == createdDay)
+          messagesByDay[day][createdDay].push(message)
         }
       }
       else{
-        if(messagesByDate.find(date => date.hasOwnProperty(`${createdDate}-${createdMonth}-${createdYear}`))){
-          const dateObject = messagesByDate.find(date => date.hasOwnProperty(`${createdDate}-${createdMonth}-${createdYear}`))
-          dateObject[`${createdDate}-${createdMonth}-${createdYear}`].push(message)
-          messagesByDate = [...messagesByDate, dateObject]
-        }else {
-          messagesByDate = [...messagesByDate, {[`${createdDate}-${createdMonth}-${createdYear}`]: [message]}]
-        }
+        messagesByDate = [...messagesByDate, {[`${createdDate}-${createdMonth}-${createdYear}`]:[message]}]
       }
     });
 

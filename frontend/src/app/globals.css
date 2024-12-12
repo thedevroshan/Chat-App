@@ -32,3 +32,31 @@ body {
   scrollbar-width: none;     /* Firefox */
 }
 
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  transition: all ease-out 0.5s;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--foreground);
+  border-radius: 100px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--background);
+  border-radius: 100px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--secondary-text);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-track:hover {
+  background-color: var(--light-secondary);
+}

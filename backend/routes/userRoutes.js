@@ -43,7 +43,7 @@ router.get('/getotheruserinfo/:userId',isLoggedIn, GetOtherUserInfo)
 
 router.get('/allfriends',isLoggedIn, GetAllFriends)
 
-router.get('/search/:username',isLoggedIn, Search)
+router.get('/search/:username_or_name',isLoggedIn, Search)
 
 router.get('/getlastactive/:userId',isLoggedIn, GetLastActive)
 

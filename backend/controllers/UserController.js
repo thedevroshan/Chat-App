@@ -530,7 +530,7 @@ export const GetAllFriends = async (req, res) => {
 
 export const Search = async (req, res) => {
   try {
-    const isSearchedUserExists = await User.findOne({username: req.params.username}).select('-password')
+    const isSearchedUserExists = await User.findOne({username: {$regex: req.params.username_or_name, $options: 'i'}}).select('-password') || await User.findOne({name: {$regex: req.params.username_or_name, $options: 'i'}}).select('-password')
 
     if(!isSearchedUserExists){
       return res.status(404).json({ok: false, msg: 'User Not Found'})
