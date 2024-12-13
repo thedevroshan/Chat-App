@@ -9,6 +9,7 @@ import useUserStore from "../store/useUserStore";
 
 // Components
 import Button from "./Button";
+import ProfilePic from "./ProfilePic";
 
 const Account = () => {
   const setUsername = useUserStore((state) => state.setUsername);
@@ -193,7 +194,7 @@ const Account = () => {
     setChangePassword(true);
     const parent = e.target.parentElement;
 
-    if (parent.children[0].value != '' && parent.children[1].value != '') {
+    if (parent.children[0].value != "" && parent.children[1].value != "") {
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BACKEND}/api/user/change/password`,
@@ -209,7 +210,7 @@ const Account = () => {
             }),
           }
         );
-  
+
         const res = await response.json();
         if (!res.ok) {
           setMsg({ other: res.msg, ok: false });
@@ -222,9 +223,11 @@ const Account = () => {
       } catch (error) {
         console.warn(error);
       }
-    }
-    else if(parent.children[0].value === '' && parent.children[1].value === ''){
-      setChangePassword(false)
+    } else if (
+      parent.children[0].value === "" &&
+      parent.children[1].value === ""
+    ) {
+      setChangePassword(false);
     }
   };
 
@@ -233,11 +236,7 @@ const Account = () => {
       <div className="w-[50vw] h-fit bg-background flex flex-col rounded-xl gap-2 py-3">
         {/* User Basic Info Div */}
         <div className="w-full h-fit flex select-none py-1 px-2 items-center justify-center gap-3">
-          <img
-            src={profile_pic ? profile_pic : "/user-icon.png"}
-            alt=""
-            className="rounded-full w-24"
-          />
+          <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={24} height={24}/>
 
           <div className="flex flex-col w-full h-fit">
             <span className="text-white text-xl">{name}</span>

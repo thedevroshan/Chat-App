@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 
 // Components
 import Message from "./Message";
+import ProfilePic from "./ProfilePic";
 
 // Stores
 import useUserStore from "../store/useUserStore";
@@ -16,8 +17,6 @@ import { SendMessageAPI, GetAllMessagesAPI } from "../../../api/messageAPI";
 import { GetLastActiveAPI } from "../../../api/userAPI";
 
 const ChatBox = ({ userId }) => {
-  let count;
-
   // User Store
   const myId = useUserStore((state) => state._id);
 
@@ -25,10 +24,11 @@ const ChatBox = ({ userId }) => {
   const [isOnline, setOnline] = useState(false);
   const [lastActive, setLastActive] = useState("");
   const [messages, setMessages] = useState([]);
+  const [pendingMessages, setPendingMessage] = useState([]);
   const [newMessage, setNewMessage] = useState({ message: "", file: "" });
 
   // References
-  const chatBoxRef = useRef()
+  const chatBoxRef = useRef();
 
   // Filtering out the friend whom user is talking. So that user can see user's details at the top of chatbox
   const friends = useUserStore((state) => state.friends);
@@ -38,7 +38,6 @@ const ChatBox = ({ userId }) => {
 
   // Socket
   const { onlineUser, socket } = useSocket();
-
 
   const GetLastActive = async () => {
     const res = await GetLastActiveAPI(userId);
@@ -50,43 +49,73 @@ const ChatBox = ({ userId }) => {
   };
 
   const SendMessage = async (e) => {
+    if (
+      e.key == "Enter" ||
+      (e.target.id == "send-message" && newMessage.message != "")
+    ) {
+      // Showing Message Pending if internet is slow or server
+      const pendingMessageId = Date.now();
+      setPendingMessage((prevState) => [
+        ...prevState,
+        {
+          _id: pendingMessageId,
+          message: newMessage.message,
+          file: newMessage.file,
+          sender: myId,
+        },
+      ]);
 
-    if (e.key == "Enter" || e.target.id == "send-message" && newMessage != '') {
-      const res = await SendMessageAPI(newMessage, userId);
+      // Storing newMessage in new object,to make message input field blank So user can't send two same messages
+      const messageObject = newMessage;
+      setNewMessage({ message: "", file: "" });
+
+      const res = await SendMessageAPI(messageObject, userId);
       if (!res.ok) {
         console.log(res.msg);
         return;
       }
-      setMessages((prevState) => 
+
+      // Removing Pending Message
+      setPendingMessage(
+        pendingMessages.filter(
+          (pendingMessages) => pendingMessages._id != pendingMessageId
+        )
+      );
+
+      setMessages((prevState) =>
         prevState.map((item) => {
-          if(Object.keys(item) == 'Today'){
-            return { ...item, Today: [...item.Today, res.data] }
-          }else {
-            return item
+          if (Object.keys(item) == "Today") {
+            return { ...item, Today: [...item.Today, res.data] };
+          } else {
+            return item;
           }
         })
       );
-      setNewMessage({ message: "", file: "" });
     }
   };
 
   const GetAllMessages = async () => {
-    const res = await GetAllMessagesAPI(userId)
-    if(!res.ok){
-      console.log(res.msg)
-      return
+    const res = await GetAllMessagesAPI(userId);
+    if (!res.ok) {
+      console.log(res.msg);
+      return;
     }
-    const newMessagesArray = res.data.filter(day => {
-      const key = Object.keys(day)[0]
-      return day[key].length != 0
-    })
-    if(Object.keys(newMessagesArray[newMessagesArray.length - 1])[0] !== 'Today'){
-      setMessages([...newMessagesArray, {Today: []}])
+    const newMessagesArray = res.data.filter((day) => {
+      const key = Object.keys(day)[0];
+      return day[key].length != 0;
+    });
+    const lastObjectOfNewMessagesArray =
+      newMessagesArray[newMessagesArray.length - 1];
+    if (
+      lastObjectOfNewMessagesArray === null ||
+      lastObjectOfNewMessagesArray === undefined ||
+      lastObjectOfNewMessagesArray === ""
+    ) {
+      setMessages([...newMessagesArray, { Today: [] }]);
+    } else {
+      setMessages([...newMessagesArray]);
     }
-    else {
-      setMessages([...newMessagesArray])
-    }
-  }
+  };
 
   useEffect(() => {
     if (currentFriendDMDetails[0]) {
@@ -97,20 +126,24 @@ const ChatBox = ({ userId }) => {
 
   useEffect(() => {
     GetLastActive();
-    GetAllMessages()
+    GetAllMessages();
     return () => {};
   }, []);
 
   useEffect(() => {
     if (socket) {
       socket.on("newMessage", (message) => {
-        setMessages(prevMessages => prevMessages.map((day) => {
-          if(Object.keys(day) == 'Today'){
-            return {...day, Today: [...day.Today, message]}
-          }else {
-            return day
-          }
-        }))
+        if (message.sender == currentFriendDMDetails[0]._id) {
+          setMessages((prevMessages) =>
+            prevMessages.map((day) => {
+              if (Object.keys(day) == "Today") {
+                return { ...day, Today: [...day.Today, message] };
+              } else {
+                return day;
+              }
+            })
+          );
+        }
       });
     }
     return () => {
@@ -122,25 +155,20 @@ const ChatBox = ({ userId }) => {
 
   // Auto Scroll
   useEffect(() => {
-    chatBoxRef.current.scrollBy(0, chatBoxRef.current.scrollHeight * 1)
-    return () => {
-    };
+    chatBoxRef.current.scrollBy(0, chatBoxRef.current.scrollHeight * 1);
+    return () => {};
   }, [messages, []]);
-
 
   return (
     <div className="w-[60vw] xl:w-[52vw] h-[100vh] flex flex-col rounded-tl-3xl rounded-bl-3xl bg-foreground ml-2 pb-4">
       <section className="bg-background flex items-center gap-4 w-full h-fit px-2 py-2 rounded-tl-3xl border border-border">
         {currentFriendDMDetails[0] && (
           <>
-            <img
-              src={
-                currentFriendDMDetails[0].profile_pic
-                  ? currentFriendDMDetails[0].profile_pic
-                  : "/user-icon.png"
-              }
-              alt="Profile Pic"
-              className="rounded-full border border-border w-12"
+            <ProfilePic
+              profile_pic={currentFriendDMDetails[0].profile_pic}
+              defaultUserIcon={"/user-icon.png"}
+              width={12}
+              height={12}
             />
 
             <div className="flex flex-col w-full h-fit select-none">
@@ -175,10 +203,20 @@ const ChatBox = ({ userId }) => {
             </span>
 
             {days[Object.keys(days)[0]].map((message) => (
-              <Message key={message._id} message={message} myId={myId}/>
+              <Message key={message._id} message={message} myId={myId} />
             ))}
           </section>
         ))}
+
+        {/* Pending Message Section */}
+        <section
+          id="pending-message-section"
+          className="w-full h-fit gap-4 flex flex-col items-end"
+        >
+          {pendingMessages.map((message) => (
+            <Message key={message._id} message={message} myId={myId} />
+          ))}
+        </section>
       </section>
 
       <section

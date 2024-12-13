@@ -3,9 +3,9 @@ export const ValidateAll = (formData, setErrors) => {
 
   // Username validation
   if (!formData.username) newErrors.username = "Username is required";
-  else if (!/^[a-z_.]+$/.test(formData.username)) {
+  else if (!/^[a-z_.0-9]+$/.test(formData.username)) {
     newErrors.username =
-      "Username can only contain lowercase letters, underscores, and dots";
+      "Username can only contain lowercase letters, underscores, dots and numbers";
   }
 
   // Name validation
@@ -38,7 +38,7 @@ export const ValidateAll = (formData, setErrors) => {
     if (!/[0-9]/.test(password)) {
       newErrors.password = "Password must include at least one number";
     }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    if (!/[!@#$%^&*(),.?":{}|<>/]/.test(password)) {
       newErrors.password =
         "Password must include at least one special character";
     }

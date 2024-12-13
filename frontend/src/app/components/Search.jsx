@@ -23,6 +23,8 @@ const Search = () => {
   const setSearching = useAppStore((state) => state.setSearching);
 
   const requested = useUserStore(state => state.requested)
+  const friends = useUserStore(state => state.friends)
+  const myId = useUserStore(state => state._id)
 
   // States
   const [fetchMsg, setFetchMsg] = useState({
@@ -78,7 +80,7 @@ const Search = () => {
                 )}
 
                 {fetchMsg.ok && searchedUser.map((user)=>(
-                  <SearchedUser key={user._id} username={user.username} name={user.name} profilePic={user.profile_pic} userId={user._id} isRequested={requested.includes(user._id)}/>
+                  <SearchedUser key={user._id} username={user.username} name={user.name} profilePic={user.profile_pic} userId={user._id} isRequested={requested.includes(user._id)} isAcceptable={user.requested.includes(myId)} isFriend={user.friends.includes(myId)}/>
                 ))}
               </div>
             )}

@@ -4,15 +4,17 @@ import { configuration } from "../config/config.js";
 // Models
 import { User } from "../models/user.js";
 import { FriendRequest } from "../models/friendRequest.js";
-import {ConversationId} from '../models/conversationId.js'
+import { ConversationId } from "../models/conversationId.js";
 
 // Socket
 import { socketIO, GetUserSocketId } from "../socket/socket.js";
 
 export const AddFriendRequest = async (req, res) => {
   try {
-    if(req.user.id === req.params.userId){
-      return res.status(400).json({ok:false,msg:'You cannot send friend request to yourself'})
+    if (req.user.id === req.params.userId) {
+      return res
+        .status(400)
+        .json({ ok: false, msg: "You cannot send friend request to yourself" });
     }
 
     const alreadyRequested = await User.findOne({
@@ -30,6 +32,13 @@ export const AddFriendRequest = async (req, res) => {
       return res
         .status(404)
         .json({ ok: false, msg: "Requested User Not Found" });
+    }
+
+    // if User A send request to B and Later B also tries to send request to A
+    if (isRequestedUser.requested.includes(req.user.id)) {
+      res
+        .status(400)
+        .json({ ok: false, msg: "You cannot request because that user did." });
     }
 
     if (isRequestedUser.friends.includes(req.user.id)) {
@@ -63,7 +72,6 @@ export const AddFriendRequest = async (req, res) => {
         .json({ ok: false, msg: "Unable to make friend request" });
     }
 
-
     const isRequestedUpdated = await User.findByIdAndUpdate(req.params.userId, {
       $push: {
         requests: newFriendRequest._id,
@@ -77,8 +85,8 @@ export const AddFriendRequest = async (req, res) => {
     }
 
     // Sending Notification
-    const socketId = GetUserSocketId(req.params.userId)
-    socketIO.to(socketId).emit('newFriendRequest', newFriendRequest)
+    const socketId = GetUserSocketId(req.params.userId);
+    socketIO.to(socketId).emit("newFriendRequest", newFriendRequest);
 
     res.status(200).json({ ok: true, msg: "Friend Request Sent!" });
   } catch (error) {
@@ -93,21 +101,27 @@ export const AddFriendRequest = async (req, res) => {
 export const DeleteRequest = async (req, res) => {
   try {
     // Removing the requested user's id from requested array of the sender
-    const isSenderUpdated = await User.findByIdAndUpdate(req.friendRequest.from, {
-      $pull: {
-        requested: req.friendRequest.to,
-      },
-    });
+    const isSenderUpdated = await User.findByIdAndUpdate(
+      req.friendRequest.from,
+      {
+        $pull: {
+          requested: req.friendRequest.to,
+        },
+      }
+    );
 
     // Removing the Friend Request id from requests array of the requested user
-    const isReceiverUpdated = await User.findByIdAndUpdate(req.friendRequest.to, {
-      $pull: {
-        requests: req.params.requestId,
-      },
-    });
+    const isReceiverUpdated = await User.findByIdAndUpdate(
+      req.friendRequest.to,
+      {
+        $pull: {
+          requests: req.friendRequest.requestDocId,
+        },
+      }
+    );
 
     const isRequestDeleted = await FriendRequest.findByIdAndDelete(
-      req.params.requestId
+      req.friendRequest.requestDocId
     );
 
     if (!isReceiverUpdated || !isSenderUpdated || !isRequestDeleted) {
@@ -132,7 +146,7 @@ export const AcceptFriendRequest = async (req, res) => {
       req.friendRequest.to,
       {
         $pull: {
-          requests: req.params.requestId,
+          requests: req.friendRequest.requestDocId,
         },
         $push: {
           friends: req.friendRequest.from,
@@ -153,7 +167,7 @@ export const AcceptFriendRequest = async (req, res) => {
     );
 
     const isFriendRequestDeleted = await FriendRequest.findByIdAndDelete(
-      req.params.requestId
+      req.friendRequest.requestDocId
     );
 
     if (
@@ -167,10 +181,12 @@ export const AcceptFriendRequest = async (req, res) => {
     }
 
     const isCreated = await ConversationId.create({
-      users: [req.user.id, req.friendRequest.from]
-    })
-    if(!isCreated){
-      return res.status(400).json({ok: false,msg:'Unable to accept friend request'})
+      users: [req.user.id, req.friendRequest.from],
+    });
+    if (!isCreated) {
+      return res
+        .status(400)
+        .json({ ok: false, msg: "Unable to accept friend request" });
     }
     res.status(200).json({ ok: true, msg: "Friend Request Accepted" });
   } catch (error) {
@@ -200,4 +216,3 @@ export const GetAllRequest = async (req, res) => {
     }
   }
 };
-  

@@ -1,4 +1,4 @@
-const Button = ({variant, btnText, onClick, disableOn, onDisableChildren, textColor, name, customSytle}) => {
+const Button = ({variant, btnText, onClick, disableOn, onDisableBtnText, textColor, name, customSytle}) => {
   return (
     <>
     {/* Primary Button */}
@@ -34,7 +34,7 @@ const Button = ({variant, btnText, onClick, disableOn, onDisableChildren, textCo
     {
         variant == 'primary-loader-full'?<button onClick={onClick} disabled={disableOn} className={`w-full h-10 outline-none text-black font-semibold rounded-lg transition-all active:scale-95 ${disableOn?'bg-primary-btn-disable':'bg-white'} ${disableOn?'hover:bg-primary-btn-disable':'hover:bg-primary-btn-hover'} ${customSytle}`} name={name}>
             {
-                disableOn?onDisableChildren:btnText
+                disableOn?onDisableBtnText:btnText
             }
         </button>:''
     }

@@ -8,6 +8,9 @@ import { GetOtherUserInfoAPI } from "../../../api/userAPI";
 // Context
 import { useSocket } from "../contexts/useSocketContext";
 
+// Components
+import ProfilePic from "./ProfilePic";
+
 const ChatBoxDetailPanel = () => {
   const { onlineUser } = useSocket();
   // States
@@ -41,7 +44,7 @@ const ChatBoxDetailPanel = () => {
         </div>
         <div className="w-full h-fit flex bg-foreground overflow-x-scroll select-none scrollbar-hidden px-2 py-1">
             {users.map((user)=>(
-                <img key={user.id} src={user.profilePic?user.profilePic:'/user-icon.png'} className="w-12 rounded-full border border-border"/>
+              <ProfilePic key={user.id} profile_pic={user.profilePic} defaultUserIcon={'/user-icon.png'} width={12} height={12}/>
             ))}
         </div>
       </div>

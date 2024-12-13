@@ -5,6 +5,7 @@ import { useState } from "react";
 // Components
 import Button from "./Button";
 import ChangeProfilePic from "./ChangeProfilePic";
+import ProfilePic from "./ProfilePic";
 
 // Stores
 import useUserStore from "../store/useUserStore";
@@ -62,11 +63,7 @@ const Profile = () => {
         <div className="w-full h-fit flex flex-col gap-3 lg:flex-row">
           {/* PROFILE PIC */}
           <div className="bg-background w-full h-fit rounded-2xl px-2 py-2 gap-24 flex items-center justify-between">
-            <img
-              src={profile_pic ? profile_pic : "/user-icon.png"}
-              alt="Profile Pic"
-              className="w-24 rounded-full"
-            />
+            <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={24} height={24}/>
 
             <div className="flex w-full flex-col gap-2">
               <Button

@@ -4,6 +4,7 @@ import { useState } from "react";
 
 // Components
 import Button from "./Button";
+import ProfilePic from "./ProfilePic";
 
 // API
 import {
@@ -40,11 +41,8 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
       }`}
     >
       <div className="flex w-full h-fit items-center gap-2">
-        <img
-          src={profilePic ? profilePic : "/user-icon.png"}
-          alt="Profile Pic"
-          className="w-16 rounded-full"
-        />
+        <ProfilePic profile_pic={profilePic} defaultUserIcon={'/user-icon.png'} width={16} height={16}/>
+
         <span className="text-white text-lg select-none">
           {username}{" "}
           {isRequestAccepted

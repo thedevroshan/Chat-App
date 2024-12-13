@@ -6,6 +6,7 @@ import Image from "next/image";
 
 // Components
 import SGDMCard from "./SGDMCard";
+import ProfilePic from "./ProfilePic";
 
 // Stores
 import useUserStore from "../store/useUserStore";
@@ -93,11 +94,8 @@ const Navbar = () => {
       {/* User Profile */}
       <Link href={"/settings/account"}>
         <div className="flex xl:w-[23vw] w-fit h-fit items-center gap-2 px-1 py-1 cursor-pointer hover:bg-primary-nav-hover mt-2 rounded-xl transition-all">
-          <img
-            src={profile_pic ? profile_pic : "/user-icon.png"}
-            alt="Profile Pic"
-            className="w-12 rounded-full"
-          />
+          <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={9} height={9} customStyle={'md:w-10 md:h-10 xl:w-12 xl:h-12'}/>
+
           <div className="flex-col h-fit hidden xl:flex">
             <span className="text-lg font-semibold xl:text-white">{name}</span>
             <span className="text-sm text-secondary-text font-semibold">
