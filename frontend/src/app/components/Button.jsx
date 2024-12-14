@@ -129,7 +129,7 @@ const Button = ({
         <button
           onClick={onClick}
           disabled={disableOn}
-          className={`w-full h-10 outline-none font-semibold border-2 border-white rounded-lg transition-all active:scale-95 hover:text-black ${disableOn ? "bg-primary-btn-disable" : "bg-transparent"
+          className={`w-full h-10 outline-none font-semibold border-2 border-white rounded-lg transition-all active:scale-95 hover:text-black hover:bg-white text-white ${disableOn ? "bg-primary-btn-disable" : "bg-transparent"
           }${customSytle}`}
           name={name}
         >

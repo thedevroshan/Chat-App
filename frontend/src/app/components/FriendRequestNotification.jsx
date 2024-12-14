@@ -14,31 +14,32 @@ import {
 
 const FriendRequestNotification = ({ profilePic, username, requestId }) => {
   const [isHidden, setHidden] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [isAcceptLoading, setAcceptLoading] = useState(false);
+  const [isDeclineLoading, setDeclineLoading] = useState(false);
   const [isRequestAccepted, setRequestAccepted] = useState(false);
 
   const DeclineFriendRequest = async () => {
-    setLoading(true)
+    setDeclineLoading(true)
     const res = await DeclineFriendRequestAPI(requestId);
     if (!res.ok) {
       console.log(res.msg);
-      setLoading(false)
+      setDeclineLoading(false)
       return;
     }
     setHidden(true);
-    setLoading(false)
+    setDeclineLoading(false)
   };
 
   const AcceptFriendRequest = async () => {
-    setLoading(true)
+    setAcceptLoading(true)
     const res = await AcceptFriendRequestAPI(requestId);
     if (!res.ok) {
       console.log(res.msg);
-      setLoading(false)
+      setAcceptLoading(false)
       return;
     }
     setRequestAccepted(true);
-    setLoading(false)
+    setAcceptLoading(false)
   };
 
   return (
@@ -66,15 +67,14 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
               variant="primary-loader-full"
               btnText="ACCEPT"
               onClick={AcceptFriendRequest}
-              disableOn={isLoading}
+              disableOn={isAcceptLoading}
               onDisableBtnText={'Wait...'}
             />
             <Button
               variant="secondary-loader-full"
               btnText="DECLINE"
-              textColor="text-white"
               onClick={DeclineFriendRequest}
-              disableOn={isLoading}
+              disableOn={isDeclineLoading}
               onDisableBtnText={'Wait...'}
             />
           </>
