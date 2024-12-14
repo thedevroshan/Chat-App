@@ -56,20 +56,30 @@ const Profile = () => {
     setProfilePic("");
   };
 
-
   return (
     <>
       <section className="bg-transparent w-full h-fit flex flex-col gap-3 px-4">
         <div className="w-full h-fit flex flex-col gap-3 lg:flex-row">
           {/* PROFILE PIC */}
           <div className="bg-background w-full h-fit rounded-2xl px-2 py-2 gap-24 flex items-center justify-between">
-            <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={32} height={32}/>
+            {/* Display Picture */}
+            <div
+              className={`rounded-full w-32 h-32 aspect-square flex items-center justify-center overflow-clip`}
+            >
+              <img
+                src={profile_pic ? profile_pic : '/user-icon.png'}
+                alt="Profile Pic"
+                className="w-full h-full object-cover"
+              />
+            </div>
 
             <div className="flex w-full flex-col gap-2">
               <Button
                 variant="primary-full"
                 btnText="CHANGE PROFILE PIC"
-                onClick={()=>{setProfilePicture(true)}}
+                onClick={() => {
+                  setProfilePicture(true);
+                }}
                 name="profilepic-button"
               />
               <Button
@@ -140,7 +150,9 @@ const Profile = () => {
           </div>
         </div>
 
-        {changeProfilePic && <ChangeProfilePic setProfilePicture={setProfilePicture}/>}
+        {changeProfilePic && (
+          <ChangeProfilePic setProfilePicture={setProfilePicture} />
+        )}
       </section>
     </>
   );
