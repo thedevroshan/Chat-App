@@ -18,12 +18,15 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
   const [isRequestAccepted, setRequestAccepted] = useState(false);
 
   const DeclineFriendRequest = async () => {
+    setLoading(true)
     const res = await DeclineFriendRequestAPI(requestId);
     if (!res.ok) {
       console.log(res.msg);
+      setLoading(false)
       return;
     }
     setHidden(true);
+    setLoading(false)
   };
 
   const AcceptFriendRequest = async () => {
