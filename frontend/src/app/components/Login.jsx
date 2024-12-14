@@ -169,7 +169,7 @@ const Login = ({ onClick }) => {
               btnText="LOGIN"
               onClick={HandleLogin}
               disableOn={isLoading}
-              onDisableChildren="Wait..."
+              onDisableBtnText={"Wait..."}
             ></Button>
           </div>
         </div>

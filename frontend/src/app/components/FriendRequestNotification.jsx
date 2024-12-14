@@ -14,6 +14,7 @@ import {
 
 const FriendRequestNotification = ({ profilePic, username, requestId }) => {
   const [isHidden, setHidden] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [isRequestAccepted, setRequestAccepted] = useState(false);
 
   const DeclineFriendRequest = async () => {
@@ -26,12 +27,15 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
   };
 
   const AcceptFriendRequest = async () => {
+    setLoading(true)
     const res = await AcceptFriendRequestAPI(requestId);
     if (!res.ok) {
       console.log(res.msg);
+      setLoading(false)
       return;
     }
     setRequestAccepted(true);
+    setLoading(false)
   };
 
   return (
@@ -44,7 +48,7 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
         <ProfilePic profile_pic={profilePic} defaultUserIcon={'/user-icon.png'} width={16} height={16}/>
 
         <span className="text-white text-lg select-none">
-          {username}{" "}
+          <span className="font-semibold">{username}</span>{" "}
           {isRequestAccepted
             ? "is now your friend"
             : "has sent you friend request"}
@@ -56,15 +60,19 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
           <>
             {" "}
             <Button
-              variant="primary-full"
+              variant="primary-loader-full"
               btnText="ACCEPT"
               onClick={AcceptFriendRequest}
+              disableOn={isLoading}
+              onDisableBtnText={'Wait...'}
             />
             <Button
-              variant="secondary-full"
+              variant="secondary-loader-full"
               btnText="DECLINE"
               textColor="text-white"
               onClick={DeclineFriendRequest}
+              disableOn={isLoading}
+              onDisableBtnText={'Wait...'}
             />
           </>
         )}

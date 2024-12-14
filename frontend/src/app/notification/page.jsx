@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 
 // Components
@@ -9,7 +9,6 @@ import NotSupportedPage from "../components/NotSupportedPage";
 
 // Context
 import { useScreenSupport } from "../contexts/useScreenSupported";
-import { useSocket } from "../contexts/useSocketContext";
 
 // Stores
 import useNotificationStore from "../store/useNotificationStore";
@@ -21,41 +20,25 @@ const NotificationPage = () => {
   // isSupported or not
   const isSupported = useScreenSupport();
 
-  const {socket } = useSocket()
+  const notifications = useNotificationStore((state) => state.notifications);
+  const setNewNotificationArray = useNotificationStore((state) => state.setNewNotificationArray);
+  const setShowNotificationCount = useNotificationStore((state) => state.setShowNotificationCount);
 
-  // States
-  const [notifications, setNotifications] = useState([])
-
-  // Functions
-  const GetAllRequests = async () => {
-    const res = await GetAllRequestsAPI()
-    if(!res.ok){
-     return 
+  const GetAllFriendRequest = async () => {
+    const res = await GetAllRequestsAPI();
+    if (!res.ok) {
+      console.log(res.msg)
+      return;
     }
-    setNotifications([...res.data])
-  }
+    setNewNotificationArray(...res.data);
+  };
 
-
-  // Use Effect 
-  // Socket
   useEffect(()=>{
-    if(socket){
-      socket.on('newFriendRequest', (request)=>{
-        setNotifications([request])
-      }) 
-    }
-    return () => {
-    }
-  }, [socket])
-
-  // API Call
-  useEffect(() => {
-    GetAllRequests()
-    return () => {
-    }
+    GetAllFriendRequest()
+    setShowNotificationCount(false)
+    return () => {}
   }, [])
 
-  
   return (
     <>
       {!isSupported && <NotSupportedPage />}
@@ -70,8 +53,13 @@ const NotificationPage = () => {
             </header>
 
             <section className="w-full h-full flex flex-col overflow-x-hidden overflow-y-scroll gap-3">
-              {notifications.map((notification)=>(
-                <FriendRequestNotification key={notification._id} profilePic={notification.sender_profile_pic} username={notification.sender_username} requestId={notification._id}/>
+              {notifications.map((notification) => (
+                <FriendRequestNotification
+                  key={notification._id}
+                  profilePic={notification.sender_profile_pic}
+                  username={notification.sender_username}
+                  requestId={notification._id}
+                />
               ))}
             </section>
           </div>

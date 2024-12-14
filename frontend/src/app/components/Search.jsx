@@ -23,7 +23,6 @@ const Search = () => {
   const setSearching = useAppStore((state) => state.setSearching);
 
   const requested = useUserStore(state => state.requested)
-  const friends = useUserStore(state => state.friends)
   const myId = useUserStore(state => state._id)
 
   // States
@@ -53,6 +52,7 @@ const Search = () => {
     if (e.key == "Enter") {
     }
   };
+
 
   return (
     <>

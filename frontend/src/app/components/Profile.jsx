@@ -63,7 +63,7 @@ const Profile = () => {
         <div className="w-full h-fit flex flex-col gap-3 lg:flex-row">
           {/* PROFILE PIC */}
           <div className="bg-background w-full h-fit rounded-2xl px-2 py-2 gap-24 flex items-center justify-between">
-            <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={24} height={24}/>
+            <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={32} height={32}/>
 
             <div className="flex w-full flex-col gap-2">
               <Button

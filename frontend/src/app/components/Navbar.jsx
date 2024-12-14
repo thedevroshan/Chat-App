@@ -12,9 +12,13 @@ import ProfilePic from "./ProfilePic";
 import useUserStore from "../store/useUserStore";
 import useServerStore from "../store/useServerStore";
 import useAppStore from "../store/useAppStore";
+import useNotificationStore from "../store/useNotificationStore";
 
 // API
 import { GetAllFriendsAPI, GetUserServersAPI } from "../../../api/userAPI";
+
+// Socket
+import { useSocket } from "../contexts/useSocketContext";
 
 const Navbar = () => {
   const profile_pic = useUserStore((state) => state.profile_pic);
@@ -34,8 +38,17 @@ const Navbar = () => {
   const navbarListOption = useAppStore((state) => state.navbarListOption);
   const setNavbarListOption = useAppStore((state) => state.setNavbarListOption);
 
+  // Notification Store
+  const notifications = useNotificationStore((state) => state.notifications);
+  const setNotification = useNotificationStore((state) => state.setNotification);
+  const setShowNotificationCount = useNotificationStore((state) => state.setShowNotificationCount);
+  const showNotificationCount = useNotificationStore((state) => state.showNotificationCount);
+
   // States
   const [isSmallListOption, setSmallListOption] = useState(false);
+
+  // Socket
+  const { socket } = useSocket();
 
   const NavLinks = [
     {
@@ -89,12 +102,33 @@ const Navbar = () => {
     return () => {};
   }, []);
 
+  // Socket
+  useEffect(() => {
+    if (socket) {
+      socket.on("newFriendRequest", (request) => {
+        setNotification(request);
+        setShowNotificationCount(true)
+      });
+    }
+    return () => {
+      if(socket){
+        socket.off('newFriendRequest')
+      }
+    };
+  }, [socket]);
+
   return (
     <nav className="hidden sm:flex xl:w-[24vw] bg-background w-[6vw] h-[100vh] flex-col select-none gap-2 items-center">
       {/* User Profile */}
       <Link href={"/settings/account"}>
         <div className="flex xl:w-[23vw] w-fit h-fit items-center gap-2 px-1 py-1 cursor-pointer hover:bg-primary-nav-hover mt-2 rounded-xl transition-all">
-          <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={9} height={9} customStyle={'md:w-10 md:h-10 xl:w-12 xl:h-12'}/>
+          <ProfilePic
+            profile_pic={profile_pic}
+            defaultUserIcon={"/user-icon.png"}
+            width={9}
+            height={9}
+            customStyle={"md:w-10 md:h-10 xl:w-12 xl:h-12"}
+          />
 
           <div className="flex-col h-fit hidden xl:flex">
             <span className="text-lg font-semibold xl:text-white">{name}</span>
@@ -140,6 +174,14 @@ const Navbar = () => {
                 className="w-6"
               />
               {element.name}
+
+              {notifications.length > 0 && element.name == 'Notifications' && showNotificationCount && (
+                <span className="ml-auto mr-2 text-black rounded-full w-7 h-7 text-center bg-white">
+                  {notifications.length <= 9
+                    ? notifications.length
+                    : "9+"}
+                </span>
+              )}
             </Link>
           ))}
         </div>

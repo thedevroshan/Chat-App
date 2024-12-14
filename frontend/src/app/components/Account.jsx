@@ -236,7 +236,7 @@ const Account = () => {
       <div className="w-[50vw] h-fit bg-background flex flex-col rounded-xl gap-2 py-3">
         {/* User Basic Info Div */}
         <div className="w-full h-fit flex select-none py-1 px-2 items-center justify-center gap-3">
-          <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={24} height={24}/>
+          <ProfilePic profile_pic={profile_pic} defaultUserIcon={'/user-icon.png'} width={32} height={32}/>
 
           <div className="flex flex-col w-full h-fit">
             <span className="text-white text-xl">{name}</span>

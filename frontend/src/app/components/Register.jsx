@@ -62,7 +62,7 @@ const Register = ({ onClick }) => {
         <div className="md:w-[40vw] w-[100vw] h-[100vh] flex flex-col gap-4 items-center justify-center">
           <div className="w-full flex flex-col items-center justify-center gap-2">
             <img src="/test3.png" alt="" className="w-14" />
-            <span className="text-3xl">BAATCHIT</span>
+            <span className="text-3xl">AURBHAII</span>
             <span className="text-[12px] text-secondary-text font-semibold">
               ALREADY HAVE AN ACCOUNT??
               <button className="text-primary-text" onClick={onClick}>
@@ -134,7 +134,7 @@ const Register = ({ onClick }) => {
               btnText="REGISTER"
               onClick={HandleSubmit}
               disableOn={isLoading}
-              onDisableChildren="Wait..."
+              onDisableBtnText={"Wait..."}
             ></Button>
           </div>
         </div>
