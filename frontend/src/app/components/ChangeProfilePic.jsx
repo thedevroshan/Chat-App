@@ -85,7 +85,7 @@ const ChangeProfilePic = ({ setProfilePicture }) => {
                 variant="primary-loader-full"
                 btnText="Upload"
                 disableOn={isLoading}
-                onDisableChildren={isLoading ? "Wait..." : "Upload"}
+                onDisableBtnText={isLoading ? "Wait..." : "Upload"}
                 onClick={UploadProfilePic}
               />
             )}
@@ -94,7 +94,7 @@ const ChangeProfilePic = ({ setProfilePicture }) => {
                 variant="primary-loader-full"
                 btnText="Upload"
                 disableOn={true}
-                onDisableChildren="Upload"
+                onDisableBtnText="Upload"
               />
             )}
             <Button
