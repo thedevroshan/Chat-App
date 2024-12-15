@@ -553,19 +553,22 @@ export const GetLastActive = async (req, res) => {
       return res.status(404).json({ok: false,msg: 'User Not Found'})
     }
 
-    const minutes = (Date.now() - parseInt(user.lastActive))/60000
+    const minutes = ((Date.now() - parseInt(user.lastActive))/1000)/60
+    const hours = Math.floor(minutes/60)
+    const days = Math.floor(minutes/(60 * 24))
 
-    if(Math.round(minutes/60) >= 48 && Math.round(minutes/60) != 0){
-      return res.status(200).json({ok: true, msg: 'Last Active', data: (Math.floor(minutes/60))/24 + 'days ago'})
-    }
-    else if(Math.round(minutes/60) >= 24 && Math.round(minutes/60) != 0){
-      return res.status(200).json({ok: true, msg: 'Last Active', data: 'Yesterday'})
-    } 
-    else if(Math.round(minutes/60) < 24 && Math.round(minutes/60) != 0) {
-      return res.status(200).json({ok: true, msg: 'Last Active', data: Math.round(minutes/60) + 'h ago'})
+    if(days >= 2){
+      return res.status(200).json({ok: true, msg: 'Last Active', data: `${days}days ago`})
+    }else if(days == 1){
+      return res.status(200).json({ok: true, msg: 'Last Active', data: `Yesterday`})
+    }else if(hours >= 1){
+      return res.status(200).json({ok: true, msg: 'Last Active', data: `${hours}h ago`})
+    }else if(minutes >= 1){
+      return res.status(200).json({ok: true, msg: 'Last Active', data: `${minutes}m ago`})
+    }else {
+      return res.status(200).json({ok: true, msg: 'Last Active', data: `Just Now`})
     }
 
-    res.status(200).json({ok: true, msg: 'Last Active', data: Math.round(minutes) != 0?Math.round(minutes) + 'm ago':''})
   } catch (error) {
     if (configuration.IS_DEV_ENV) {
       console.log("Error in GetLastActive Controller\n" + error);
