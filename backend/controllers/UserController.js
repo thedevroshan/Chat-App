@@ -554,8 +554,9 @@ export const GetLastActive = async (req, res) => {
     }
 
     const minutes = (Date.now() - parseInt(user.lastActive))/60000
+
     if(Math.round(minutes/60) >= 48 && Math.round(minutes/60) != 0){
-      return res.status(200).json({ok: true, msg: 'Last Active', data: (Math.round(minutes/60))/24 + 'days ago'})
+      return res.status(200).json({ok: true, msg: 'Last Active', data: (Math.floor(minutes/60))/24 + 'days ago'})
     }
     else if(Math.round(minutes/60) >= 24 && Math.round(minutes/60) != 0){
       return res.status(200).json({ok: true, msg: 'Last Active', data: 'Yesterday'})
@@ -563,6 +564,7 @@ export const GetLastActive = async (req, res) => {
     else if(Math.round(minutes/60) < 24 && Math.round(minutes/60) != 0) {
       return res.status(200).json({ok: true, msg: 'Last Active', data: Math.round(minutes/60) + 'h ago'})
     }
+
     res.status(200).json({ok: true, msg: 'Last Active', data: Math.round(minutes) != 0?Math.round(minutes) + 'm ago':''})
   } catch (error) {
     if (configuration.IS_DEV_ENV) {
