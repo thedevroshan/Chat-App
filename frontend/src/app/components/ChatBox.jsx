@@ -50,8 +50,8 @@ const ChatBox = ({ userId }) => {
 
   const SendMessage = async (e) => {
     if (
-      e.key == "Enter" ||
-      (e.target.id == "send-message" && newMessage.message != "")
+      e.key == "Enter"
+      && e.target.value != '' || e.target.id == 'send-message'
     ) {
       // Showing Message Pending if internet is slow or server
       const pendingMessageId = Date.now();
@@ -69,6 +69,7 @@ const ChatBox = ({ userId }) => {
       const messageObject = newMessage;
       setNewMessage({ message: "", file: "" });
 
+      // Send Message API Request
       const res = await SendMessageAPI(messageObject, userId);
       if (!res.ok) {
         console.log(res.msg);
@@ -77,9 +78,7 @@ const ChatBox = ({ userId }) => {
 
       // Removing Pending Message
       setPendingMessage(
-        pendingMessages.filter(
-          (pendingMessages) => pendingMessages._id != pendingMessageId
-        )
+        (prevPendingMessages) => prevPendingMessages.filter(pendingMessage => pendingMessage._id != pendingMessageId)
       );
 
       setMessages((prevState) =>
