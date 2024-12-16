@@ -145,7 +145,7 @@ const Profile = () => {
               btnText={isReadOnly ? "EDIT" : "SAVE"}
               onClick={UpdateProfile}
               disableOn={isLoading}
-              onDisableChildren="Wait..."
+              onDisableBtnText="Wait..."
             />
           </div>
         </div>
