@@ -66,7 +66,11 @@ const ChatBox = ({ userId }) => {
       ]);
 
       // Storing newMessage in new object,to make message input field blank So user can't send two same messages
-      const messageObject = newMessage;
+      const date = new Date();
+      const amPM = date.getHours() >= 12 ? "PM" : "AM";
+      const time = date.getHours() + ":" + date.getMinutes() + " " + amPM;
+
+      const messageObject = {...newMessage, time};
       setNewMessage({ message: "", file: "" });
 
       // Send Message API Request

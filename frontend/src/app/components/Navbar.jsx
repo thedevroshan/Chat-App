@@ -54,7 +54,7 @@ const Navbar = () => {
     {
       name: "Notifications",
       icon: "/notification-icon.png",
-      path: "/notification",
+      path: "/notifications",
     },
     {
       name: "Spaces",

@@ -17,10 +17,6 @@ export const SendMessage = async (req, res) => {
 
     const isRecevierIsFriend = await User.findById(sender);
 
-    const date = new Date();
-    const amPM = date.getHours() > 12 ? "PM" : "AM";
-    const time = date.getHours() + ":" + date.getMinutes() + " " + amPM;
-
     if (!isRecevierIsFriend.friends.includes(receiver)) {
       return res.status(400).json({
         ok: false,
@@ -48,7 +44,7 @@ export const SendMessage = async (req, res) => {
         receiver,
         message: req.body.message,
         conversation_id: conversationId._id,
-        time,
+        time: req.body.time,
       });
 
       if (!newMessage) {
@@ -131,6 +127,19 @@ export const GetAllMessages = async (req, res) => {
     res
       .status(200)
       .json({ ok: true, msg: "All Messages", data: allArrangedMessages });
+  } catch (error) {
+    if (configuration.IS_DEV_ENV) {
+      console.log("Error in GetAllMessages Function\n" + error);
+    } else {
+      res.status(500).json({ ok: false, msg: "Internal Server Error" });
+    }
+  }
+};
+
+
+
+export const EditMessage = async (req, res) => {
+  try {
   } catch (error) {
     if (configuration.IS_DEV_ENV) {
       console.log("Error in GetAllMessages Function\n" + error);

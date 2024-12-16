@@ -5,6 +5,7 @@ const router = express.Router();
 import { 
     SendMessage,
     GetAllMessages,
+    EditMessage
     // DeleteMessage
 } from "../controllers/MessageController.js";
 
@@ -17,6 +18,8 @@ import { isLoggedIn } from "../middlewares/isLoggedIn.js";
 router.post("/sendmessage/:userId", isLoggedIn, SendMessage);
 
 router.get("/getallmessage/:userId", isLoggedIn, GetAllMessages);
+
+router.put("/editmessage/:messageId", isLoggedIn, EditMessage);
 
 // router.get("/deletemessage/:messageId", isLoggedIn, DeleteMessage)
 

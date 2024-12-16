@@ -11,6 +11,7 @@ export const SendMessageAPI = async (message, userId) => {
         body: JSON.stringify({
           message: message.message,
           file: message.file,
+          time: message.time
         }),
       }
     );
