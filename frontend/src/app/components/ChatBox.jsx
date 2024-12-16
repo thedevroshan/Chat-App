@@ -106,9 +106,7 @@ const ChatBox = ({ userId }) => {
     const lastObjectOfNewMessagesArray =
       newMessagesArray[newMessagesArray.length - 1];
     if (
-      lastObjectOfNewMessagesArray === null ||
-      lastObjectOfNewMessagesArray === undefined ||
-      lastObjectOfNewMessagesArray === ""
+      Object.keys(lastObjectOfNewMessagesArray)[0] != 'Today'
     ) {
       setMessages([...newMessagesArray, { Today: [] }]);
     } else {
