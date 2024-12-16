@@ -15,7 +15,6 @@ import { ValidateOTP } from "../utils/ValidateOTP.js";
 // Appwrite
 import { storage } from "../config/appwrite.js";
 import { InputFile } from "node-appwrite/file";
-import { socketIO, GetUserSocketId } from "../socket/socket.js";
 
 export const GetUserInfo = async (req, res) => {
   try {
