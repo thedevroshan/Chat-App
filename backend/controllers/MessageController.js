@@ -85,17 +85,9 @@ export const GetAllMessages = async (req, res) => {
     const allMessages = await Message.find({ conversation_id });
     if (!allMessages) res.status(400).json({ ok: true, msg: "No Messages" });
 
-    let messagesByTwoDay = [{ Yesterday: [] }, { Today: [] }];
-    let messagesByDay = [
-      { Sun: [] },
-      { Mon: [] },
-      { Tue: [] },
-      { Wed: [] },
-      { Thu: [] },
-      { Fri: [] },
-      { Sat: [] },
-    ];
-    let messagesByDate = [];
+    let messagesByTwoDay = {Yesterday: [], Today: []};
+    let messagesByDay = {};
+    let messagesByDate = {};
 
     allMessages.forEach((message) => {
       const createdTime = message.createdAt;
@@ -109,24 +101,29 @@ export const GetAllMessages = async (req, res) => {
 
       if (7 >= isInWeek) {
         if (isInWeek == 0) {
-          messagesByTwoDay[1].Today.push(message);
+          messagesByTwoDay['Today'].push(message);
         } else if (isInWeek == 1) {
-          messagesByTwoDay[0].Yesterday.push(message);
+          messagesByTwoDay['Yesterday'].push(message);
         } else if (isInWeek >= 2) {
-          let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-          let day = days.findIndex(day => day == createdDay)
-          messagesByDay[day][createdDay].push(message)
+          if(!messagesByDay[createdDay]){
+            messagesByDay[createdDay] = []
+          }
+          messagesByDay[createdDay].push(message)
         }
       }
       else{
-        messagesByDate = [...messagesByDate, {[`${createdDate}-${createdMonth}-${createdYear}`]:[message]}]
+        const timeStamp = `${createdDay} ${createdDate} ${createdYear}`
+        if(!messagesByDate[timeStamp]){
+          messagesByDate[timeStamp] = []
+        }
+        messagesByDate[timeStamp].push(message)
       }
     });
 
-    const allArrangedMessages = [...messagesByDate,...messagesByDay, ...messagesByTwoDay];
+    const allArrangedMessages = {...messagesByDate,...messagesByDay,...messagesByTwoDay};
     res
       .status(200)
-      .json({ ok: true, msg: "All Messages", data: allArrangedMessages });
+      .json({ ok: true, msg: "All Messages", data: [allArrangedMessages] });
   } catch (error) {
     if (configuration.IS_DEV_ENV) {
       console.log("Error in GetAllMessages Function\n" + error);
