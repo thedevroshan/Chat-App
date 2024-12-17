@@ -105,7 +105,7 @@ export const GetAllMessages = async (req, res) => {
         } else if (isInWeek == 1) {
           messagesByTwoDay['Yesterday'].push(message);
         } else if (isInWeek >= 2) {
-          if(!messagesByDay[createdDay]){
+          if(messagesByDay[createdDay] == undefined){
             messagesByDay[createdDay] = []
           }
           messagesByDay[createdDay].push(message)

@@ -49,10 +49,10 @@ const ChatBox = ({ userId }) => {
   };
 
   const SendMessage = async (e) => {
-    if (
-      e.key == "Enter"
-      && e.target.value != '' || e.target.id == 'send-message'
-    ) {
+    if(newMessage.message == ''){
+      return
+    }
+    else if (e.target.id == 'send-message' || e.key == 'Enter') {
       // Showing Message Pending if internet is slow or server
       const pendingMessageId = Date.now();
       setPendingMessage((prevState) => [
@@ -85,15 +85,7 @@ const ChatBox = ({ userId }) => {
         (prevPendingMessages) => prevPendingMessages.filter(pendingMessage => pendingMessage._id != pendingMessageId)
       );
 
-      setMessages((prevState) =>
-        prevState.map((item) => {
-          if (Object.keys(item) == "Today") {
-            return { ...item, Today: [...item.Today, res.data] };
-          } else {
-            return item;
-          }
-        })
-      );
+      setMessages((prevState) => [{...prevState[0], Today: [...prevState[0]['Today'],res.data]}])
     }
   };
 
@@ -103,19 +95,7 @@ const ChatBox = ({ userId }) => {
       console.log(res.msg);
       return;
     }
-    const newMessagesArray = res.data.filter((day) => {
-      const key = Object.keys(day)[0];
-      return day[key].length != 0;
-    });
-    const lastObjectOfNewMessagesArray =
-      newMessagesArray[newMessagesArray.length - 1];
-    if (
-      Object.keys(lastObjectOfNewMessagesArray)[0] != 'Today'
-    ) {
-      setMessages([...newMessagesArray, { Today: [] }]);
-    } else {
-      setMessages([...newMessagesArray]);
-    }
+    setMessages((prevState) => [...prevState, ...res.data])
   };
 
   useEffect(() => {
@@ -135,15 +115,7 @@ const ChatBox = ({ userId }) => {
     if (socket) {
       socket.on("newMessage", (message) => {
         if (message.sender == currentFriendDMDetails[0]._id) {
-          setMessages((prevMessages) =>
-            prevMessages.map((day) => {
-              if (Object.keys(day) == "Today") {
-                return { ...day, Today: [...day.Today, message] };
-              } else {
-                return day;
-              }
-            })
-          );
+          setMessages((prevState) => [{...prevState[0], Today: [...prevState[0]['Today'],res.data]}])
         }
       });
     }
@@ -194,16 +166,16 @@ const ChatBox = ({ userId }) => {
         className="w-full h-full gap-4 flex flex-col px-4 py-2 overflow-x-hidden overflow-y-scroll"
         ref={chatBoxRef}
       >
-        {messages.map((days) => (
+        {messages[0] && Object.keys(messages[0]).map((day) => (
           <section
             className="bg-transparent w-full h-fit flex flex-col gap-3"
-            key={Object.keys(days)[0]}
+            key={day}
           >
             <span className="text-secondary-text select-none bg-background px-3 py-1 font-semibold rounded-md text-lg block w-fit mx-auto text-center">
-              {Object.keys(days)[0]}
+              {day}
             </span>
 
-            {days[Object.keys(days)[0]].map((message) => (
+            {messages[0][day].map((message) => (
               <Message key={message._id} message={message} myId={myId} />
             ))}
           </section>
