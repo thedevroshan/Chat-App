@@ -563,7 +563,7 @@ export const GetLastActive = async (req, res) => {
     }else if(hours >= 1){
       return res.status(200).json({ok: true, msg: 'Last Active', data: `${hours}h ago`})
     }else if(minutes >= 1){
-      return res.status(200).json({ok: true, msg: 'Last Active', data: `${minutes}m ago`})
+      return res.status(200).json({ok: true, msg: 'Last Active', data: `${Math.floor(minutes)}m ago`})
     }else {
       return res.status(200).json({ok: true, msg: 'Last Active', data: `Just Now`})
     }
