@@ -12,6 +12,7 @@ import {
   AcceptFriendRequestAPI,
 } from "../../../api/friendRequestAPI";
 
+
 const FriendRequestNotification = ({ profilePic, username, requestId }) => {
   const [isHidden, setHidden] = useState(false);
   const [isAcceptLoading, setAcceptLoading] = useState(false);
@@ -41,6 +42,7 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
     setRequestAccepted(true);
     setAcceptLoading(false)
   };
+  
 
   return (
     <div
@@ -49,7 +51,7 @@ const FriendRequestNotification = ({ profilePic, username, requestId }) => {
       }`}
     >
       <div className="flex w-full h-fit items-center gap-2">
-        <ProfilePic profile_pic={profilePic} defaultUserIcon={'/user-icon.png'} width={16} height={16}/>
+        <ProfilePic profile_pic={profilePic} defaultUserIcon={'/user-icon.png'} width={12} height={12}/>
 
         <span className="text-white text-lg select-none">
           <span className="font-semibold">{username}</span>{" "}

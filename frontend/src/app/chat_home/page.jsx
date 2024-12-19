@@ -15,7 +15,6 @@ const ChatHome = () => {
     <>
       {isSupported && (
         <>
-          <Navbar />
           <div className="w-[60vw] xl:w-[52vw] h-[100vh] flex flex-col px-4 rounded-tl-3xl rounded-bl-3xl bg-foreground ml-2 gap-3 py-4 items-center justify-center">
             <Image src={"/aurbhaii.png"} width={200} height={200} className="" alt="AURBHAII LOGO"/>
 

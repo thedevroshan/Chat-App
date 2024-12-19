@@ -8,8 +8,6 @@ import ChatBoxDetailPanel from '@/app/components/ChatBoxDetailPanel'
 
 import { useScreenSupport } from '@/app/contexts/useScreenSupported'
 
-// API
-
 
 const ChatHome = ({params}) => { 
   const router = React.use(params)
@@ -19,7 +17,6 @@ const ChatHome = ({params}) => {
     <>
     {isSupported && 
     <>
-      <Navbar/>
       <ChatBox userId={router.userId}/>
       <ChatBoxDetailPanel/>
     </>

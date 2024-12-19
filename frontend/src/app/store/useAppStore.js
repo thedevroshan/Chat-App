@@ -4,6 +4,7 @@ const useAppStore = create((set) => ({
     isSearch: false,
     isSearching: false,
     navbarListOption: 'servers',
+    isLoggedIn: false,
     setSearch: (search)=>{
         set((state)=>({
             isSearch: search
@@ -17,6 +18,11 @@ const useAppStore = create((set) => ({
     setNavbarListOption: (option) => {
         set((state) => ({
             navbarListOption: option
+        }))
+    },
+    setIsLoggedIn: (isLoggedIn) => {
+        set((state) => ({
+            isLoggedIn: isLoggedIn
         }))
     }
 }))

@@ -15,7 +15,6 @@ const Server = () => {
     <>
       {isSupported && (
         <>
-          <Navbar />
           <ChatBox />
           <ChatBoxDetailPanel />
         </>

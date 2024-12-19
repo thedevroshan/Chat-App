@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useContext } from "react";
 
 // Store
 import useUserStore from "../store/useUserStore";
+import useAppStore from "../store/useAppStore";
 
 // API
 import { GetUserInfoAPI } from "../../../api/userAPI";
@@ -13,7 +14,12 @@ const UserInfoContext = createContext();
 
 // Provider Component
 export const UserInfoProvider = ({ children }) => {
+  // User Store
   const setUser = useUserStore((state)=>state.setUser)
+
+  // App Store
+  const setIsLoggedIn = useAppStore(state => state.setIsLoggedIn)
+
   const FetchUser = async () => {
     const res = await GetUserInfoAPI()
     
@@ -22,9 +28,11 @@ export const UserInfoProvider = ({ children }) => {
       if(window.location.pathname != '/'){
         window.location.pathname = '/'
       }
+      setIsLoggedIn(false)
       return
     }
     setUser(res.data)
+    setIsLoggedIn(true)
   };
 
   useEffect(() => {

@@ -115,7 +115,7 @@ const ChatBox = ({ userId }) => {
     if (socket) {
       socket.on("newMessage", (message) => {
         if (message.sender == currentFriendDMDetails[0]._id) {
-          setMessages((prevState) => [{...prevState[0], Today: [...prevState[0]['Today'],res.data]}])
+          setMessages((prevState) => [{...prevState[0], Today: [...prevState[0]['Today'],message]}])
         }
       });
     }

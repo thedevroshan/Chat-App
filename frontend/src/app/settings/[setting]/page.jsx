@@ -16,7 +16,6 @@ const Settings = ({ params }) => {
     <>
       {isSupported && (
         <>
-          <Navbar />
           <div className="w-full h-[100vh] flex flex-col rounded-tl-3xl rounded-bl-3xl bg-foreground ml-2">
             <header className="w-full h-fit py-2 bg-background text-white rounded-tl-3xl border-border border-b border-r px-6">
               <span className="select-none">Settings</span>
