@@ -45,6 +45,7 @@ export const SendMessage = async (req, res) => {
         message: req.body.message,
         conversation_id: conversationId._id,
         time: req.body.time,
+        replied_text: req.body.replied_text
       });
 
       if (!newMessage) {
@@ -85,7 +86,7 @@ export const GetAllMessages = async (req, res) => {
     const allMessages = await Message.find({ conversation_id });
     if (!allMessages) res.status(400).json({ ok: true, msg: "No Messages" });
 
-    let messagesByTwoDay = {Yesterday: [], Today: []};
+    let messagesByTwoDay = {};
     let messagesByDay = {};
     let messagesByDate = {};
 
@@ -101,8 +102,14 @@ export const GetAllMessages = async (req, res) => {
 
       if (7 >= isInWeek) {
         if (isInWeek == 0) {
+          if(!messagesByTwoDay['Today']){
+            messagesByTwoDay['Today'] = []
+          }
           messagesByTwoDay['Today'].push(message);
         } else if (isInWeek == 1) {
+          if(!messagesByTwoDay['Yesterday']){
+            messagesByTwoDay['Yesterday'] = []
+          }
           messagesByTwoDay['Yesterday'].push(message);
         } else if (isInWeek >= 2) {
           if(messagesByDay[createdDay] == undefined){
@@ -120,6 +127,7 @@ export const GetAllMessages = async (req, res) => {
       }
     });
 
+    messagesByTwoDay = messagesByTwoDay['Today']?messagesByTwoDay:messagesByTwoDay = {...messagesByTwoDay, Today: []}
     const allArrangedMessages = {...messagesByDate,...messagesByDay,...messagesByTwoDay};
     res
       .status(200)

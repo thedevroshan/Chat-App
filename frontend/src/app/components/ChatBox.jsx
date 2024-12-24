@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import { useState, useRef } from "react";
+import Image from "next/image";
 
 // Components
 import Message from "./Message";
@@ -25,7 +26,11 @@ const ChatBox = ({ userId }) => {
   const [lastActive, setLastActive] = useState("");
   const [messages, setMessages] = useState([]);
   const [pendingMessages, setPendingMessage] = useState([]);
-  const [newMessage, setNewMessage] = useState({ message: "", file: "" });
+  const [newMessage, setNewMessage] = useState({
+    message: "",
+    file: "",
+    replied_text: "",
+  });
 
   // References
   const chatBoxRef = useRef();
@@ -49,10 +54,9 @@ const ChatBox = ({ userId }) => {
   };
 
   const SendMessage = async (e) => {
-    if(newMessage.message == ''){
-      return
-    }
-    else if (e.target.id == 'send-message' || e.key == 'Enter') {
+    if (newMessage.message == "") {
+      return;
+    } else if (e.target.id == "send-message" || e.key == "Enter") {
       // Showing Message Pending if internet is slow or server
       const pendingMessageId = Date.now();
       setPendingMessage((prevState) => [
@@ -60,6 +64,7 @@ const ChatBox = ({ userId }) => {
         {
           _id: pendingMessageId,
           message: newMessage.message,
+          replied_text: newMessage.replied_text,
           file: newMessage.file,
           sender: myId,
         },
@@ -70,8 +75,8 @@ const ChatBox = ({ userId }) => {
       const amPM = date.getHours() >= 12 ? "PM" : "AM";
       const time = date.getHours() + ":" + date.getMinutes() + " " + amPM;
 
-      const messageObject = {...newMessage, time};
-      setNewMessage({ message: "", file: "" });
+      const messageObject = { ...newMessage, time };
+      setNewMessage({ message: "", file: "", replied_text: "" });
 
       // Send Message API Request
       const res = await SendMessageAPI(messageObject, userId);
@@ -81,11 +86,15 @@ const ChatBox = ({ userId }) => {
       }
 
       // Removing Pending Message
-      setPendingMessage(
-        (prevPendingMessages) => prevPendingMessages.filter(pendingMessage => pendingMessage._id != pendingMessageId)
+      setPendingMessage((prevPendingMessages) =>
+        prevPendingMessages.filter(
+          (pendingMessage) => pendingMessage._id != pendingMessageId
+        )
       );
 
-      setMessages((prevState) => [{...prevState[0], Today: [...prevState[0]['Today'],res.data]}])
+      setMessages((prevState) => [
+        { ...prevState[0], Today: [...prevState[0]["Today"], res.data] },
+      ]);
     }
   };
 
@@ -95,9 +104,10 @@ const ChatBox = ({ userId }) => {
       console.log(res.msg);
       return;
     }
-    setMessages((prevState) => [...prevState, ...res.data])
+    setMessages((prevState) => [...prevState, ...res.data]);
   };
 
+  // Getting the user is online or not
   useEffect(() => {
     if (currentFriendDMDetails[0]) {
       setOnline(onlineUser.includes(currentFriendDMDetails[0]._id));
@@ -115,7 +125,9 @@ const ChatBox = ({ userId }) => {
     if (socket) {
       socket.on("newMessage", (message) => {
         if (message.sender == currentFriendDMDetails[0]._id) {
-          setMessages((prevState) => [{...prevState[0], Today: [...prevState[0]['Today'],message]}])
+          setMessages((prevState) => [
+            { ...prevState[0], Today: [...prevState[0]["Today"], message] },
+          ]);
         }
       });
     }
@@ -166,20 +178,27 @@ const ChatBox = ({ userId }) => {
         className="w-full h-full gap-4 flex flex-col px-4 py-2 overflow-x-hidden overflow-y-scroll"
         ref={chatBoxRef}
       >
-        {messages[0] && Object.keys(messages[0]).map((day) => (
-          <section
-            className="bg-transparent w-full h-fit flex flex-col gap-3"
-            key={day}
-          >
-            <span className="text-secondary-text select-none bg-background px-3 py-1 font-semibold rounded-md text-lg block w-fit mx-auto text-center">
-              {day}
-            </span>
+        {messages[0] &&
+          Object.keys(messages[0]).map((day) => (
+            <section
+              className="bg-transparent w-full h-fit flex flex-col gap-3"
+              key={day}
+            >
+              <span className="text-secondary-text select-none bg-background px-3 py-1 font-semibold rounded-md text-lg block w-fit mx-auto text-center">
+                {day}
+              </span>
 
-            {messages[0][day].map((message) => (
-              <Message key={message._id} message={message} myId={myId} />
-            ))}
-          </section>
-        ))}
+              {messages[0][day].map((message) => (
+                <Message
+                  key={message._id}
+                  message={message}
+                  myId={myId}
+                  setNewMessage={setNewMessage}
+                  name={currentFriendDMDetails[0]&&currentFriendDMDetails[0].name}
+                />
+              ))}
+            </section>
+          ))}
 
         {/* Pending Message Section */}
         <section
@@ -187,37 +206,82 @@ const ChatBox = ({ userId }) => {
           className="w-full h-fit gap-4 flex flex-col items-end"
         >
           {pendingMessages.map((message) => (
-            <Message key={message._id} message={message} myId={myId} />
+            <Message
+              key={message._id}
+              message={message}
+              myId={myId}
+              name={
+                currentFriendDMDetails[0] ? currentFriendDMDetails[0].name : ""
+              }
+            />
           ))}
         </section>
       </section>
 
       <section
         id="message-input-section"
-        className="w-full h-12 shadow-md pt-2 px-4"
+        className="w-full h-fit shadow-md px-4"
       >
-        <div className="bg-foreground w-full h-full flex rounded-xl border border-border items-center justify-between gap-3">
+        {/* Replied To Text */}
+        {newMessage.replied_text != "" && (
+          <div className="bg-background px-4 border-t border-l border-r border-border rounded-tr-xl rounded-tl-xl text-secondary-text font-semibold select-none py-2 w-72 text-wrap flex flex-col justify-center">
+            <span className="text-sm">
+              Replying to{" "}
+              {currentFriendDMDetails[0] ? currentFriendDMDetails[0].name : ""}
+            </span>
+            <div className="flex">
+              <input
+                type="text"
+                value={newMessage.replied_text}
+                readOnly
+                className="bg-transparent outline-none border-none w-full"
+              />
+              <Image
+                src={"/cross-icon.png"}
+                alt="Cancel"
+                width={24}
+                height={24}
+                className="cursor-pointer"
+                onClick={() => {
+                  setNewMessage((prevState) => ({
+                    ...prevState,
+                    replied_text: "",
+                  }));
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="bg-foreground w-full h-10 flex rounded-xl border border-border items-center justify-between gap-3">
           <input
             type="text"
-            className="h-full w-full rounded-xl bg-background placeholder:text-secondary-text px-3 text-lg text-white outline-none border-r border-border"
+            className={`h-full w-full ${
+              newMessage.replied_text
+                ? "rounded-bl-xl rounded-br-xl rounded-tr-xl"
+                : "rounded-xl"
+            } bg-background placeholder:text-secondary-text px-3 text-lg text-white outline-none border-r border-border`}
             placeholder="Message..."
             value={newMessage.message}
             onChange={(e) => {
-              setNewMessage({ message: e.target.value });
+              setNewMessage((prevState) => ({
+                ...prevState,
+                message: e.target.value,
+              }));
             }}
             onKeyDown={SendMessage}
           />
           <img
             src="/send-icon.png"
             alt="Send"
-            className="w-9 h-9 aspect-square hover:bg-primary-nav-hover px-2 py-2 rounded-md cursor-pointer"
+            className="w-8 h-8 aspect-square hover:bg-primary-nav-hover px-1 py-1 rounded-md cursor-pointer"
             id="send-message"
             onClick={SendMessage}
           />
           <img
             src="/attachment-icon.png"
             alt="Attachment"
-            className="w-9 h-9 aspect-square px-2 py-2 rounded-md mr-1 cursor-pointer hover:bg-primary-nav-hover"
+            className="w-8 h-8 aspect-square hover:bg-primary-nav-hover px-1 py-1 rounded-md cursor-pointer mr-1"
           />
         </div>
       </section>

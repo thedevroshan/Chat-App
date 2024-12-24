@@ -1,7 +1,9 @@
 "use client";
 import React from "react";
 import { useState } from "react";
+import Image from "next/image";
 
+// Components
 import Input from "./Input";
 import Button from "./Button";
 import Verify from "./Verify";
@@ -120,7 +122,7 @@ const Login = ({ onClick }) => {
       {!isVerificationNeeded && !isForgotPassword && (
         <div className="md:w-[40vw] w-[100vw] h-[100vh] flex flex-col gap-4 items-center justify-center">
           <div className="w-full flex flex-col items-center justify-center gap-2">
-            <img src="/test3.png" alt="" className="w-14" />
+            <Image src="/aurbhaii.png" alt="Aurbhaii - Logo" width={80} height={80}/>
             <span className="text-3xl">WELCOME BACK</span>
             <span className="text-[12px] text-secondary-text font-semibold">
               NEED AN ACCOUNT??

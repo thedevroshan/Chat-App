@@ -13,7 +13,11 @@ const messageSchema = new Schema({
     },
     replied_to: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Message',
+    },
+    replied_text:{
+        type: String,
+        default: ''
     },
     message: {
         type: String,
