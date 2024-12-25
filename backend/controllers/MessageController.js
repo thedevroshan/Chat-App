@@ -119,7 +119,7 @@ export const GetAllMessages = async (req, res) => {
         }
       }
       else{
-        const timeStamp = `${createdDay} ${createdDate} ${createdYear}`
+        const timeStamp = `${createdMonth} ${createdDate} ${createdYear}`
         if(!messagesByDate[timeStamp]){
           messagesByDate[timeStamp] = []
         }
