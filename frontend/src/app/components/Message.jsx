@@ -1,27 +1,30 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
-const Message = ({ message, myId, setNewMessage,name }) => {
+const Message = ({ message, myId, setNewMessage,setEditMessage,editMessage,chatUserName,chatUserId }) => {
   const [isContextMenu, setContextMenu] = useState(false);
-  console.log(message);
+
+  // References
+  const messageDiv = useRef()
 
   return (
     <>
       <div
         className={`w-fit h-fit flex flex-col gap-1 ${
           myId == message.sender ? "ml-auto items-end" : "items-start"
-        }`}
-      >
+        }`} ref={messageDiv}
+        >
+        <span className={`text-sm text-primary-blue select-none ${message.is_edited?'block':'hidden'}`}>Edited</span>
         {/* Replied To Text */}
-        {message.replied_text !== "" && (
+        {message.replied_to_text !== "" && (
           <div
             className={`h-fit flex flex-wrap w-fit max-w-[35vw] px-4 py-3 rounded-3xl ${myId === message.sender?'rounded-br-none':'rounded-bl-none'} border border-border bg-foreground text-white font-semibold`}
           >
-            <span className="text-secondary-text text-sm select-none">{myId !== message.sender?name:'You'} Replied to {myId === message.sender?name:'You'}</span>
+            <span className="text-secondary-text text-sm select-none">{myId !== message.sender?chatUserName:'You'} Replied to {message.replied_to_user == chatUserId?chatUserName:'You'}</span>
             <span className="text-wrap text-left break-words w-full whitespace-normal select-none">
-              {message.replied_text}
+              {message.replied_to_text}
             </span>
           </div>
         )}
@@ -48,13 +51,18 @@ const Message = ({ message, myId, setNewMessage,name }) => {
               myId == message.sender ? "ml-auto" : ""
             }`}
           >
+            {/* Reply To Message */}
             <div
               className="group px-1 py-1 hover:bg-light-secondary rounded-lg cursor-pointer transition-all"
               onClick={() => {
                 setNewMessage((prevState) => ({
                   ...prevState,
-                  replied_text: message.message,
+                  replied_to_text: message.message,
+                  replied_to_messageId: message._id,
+                  replied_to_user: message.sender,
                 }));
+                editMessage.isEdit && setEditMessage({isEdit: false, messageId: ''})
+                setContextMenu(false)
               }}
             >
               <Image
@@ -85,7 +93,10 @@ const Message = ({ message, myId, setNewMessage,name }) => {
             {/* Divider */}
             <div className="border border-border h-[32px] rounded-xl"></div>
 
-            <div className="group px-1 py-1 hover:bg-light-secondary rounded-lg cursor-pointer transition-all">
+            <div className="group px-1 py-1 hover:bg-light-secondary rounded-lg cursor-pointer transition-all" onClick={async (e)=>{
+              await navigator.clipboard.writeText(message.message)
+              e.target.innerHTML = 'Copied!'
+            }}>
               <Image
                 src={"/copy-icon.png"}
                 width={30}
@@ -98,8 +109,22 @@ const Message = ({ message, myId, setNewMessage,name }) => {
               </span>
             </div>
 
+            {/* Edit Message */}
             {myId === message.sender && (
-              <div className="group px-1 py-1 hover:bg-light-secondary rounded-lg cursor-pointer transition-all">
+              <div className="group px-1 py-1 hover:bg-light-secondary rounded-lg cursor-pointer transition-all" onClick={()=>{
+                setEditMessage({
+                  isEdit: true,
+                  messageId: message._id,
+                })
+                setNewMessage((prevState) => ({
+                  ...prevState,
+                  message: message.message,
+                  replied_to_text: '',
+                  replied_to_messageId: '',
+                  replied_to_user: ''
+                }))
+                setContextMenu(false)
+              }}>
                 <Image
                   src={"/edit-icon.png"}
                   width={30}

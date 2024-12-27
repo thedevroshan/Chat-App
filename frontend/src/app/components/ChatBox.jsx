@@ -14,7 +14,7 @@ import useUserStore from "../store/useUserStore";
 import { useSocket } from "../contexts/useSocketContext";
 
 // API
-import { SendMessageAPI, GetAllMessagesAPI } from "../../../api/messageAPI";
+import { SendMessageAPI, GetAllMessagesAPI,EditMessageAPI } from "../../../api/messageAPI";
 import { GetLastActiveAPI } from "../../../api/userAPI";
 
 const ChatBox = ({ userId }) => {
@@ -29,7 +29,13 @@ const ChatBox = ({ userId }) => {
   const [newMessage, setNewMessage] = useState({
     message: "",
     file: "",
-    replied_text: "",
+    replied_to_text: "",
+    replied_to_messageId: "",
+    replied_to_user: "",
+  });
+  const [editMessage, setEditMessage] = useState({
+    isEdit: false,
+    messageId: "",
   });
 
   // References
@@ -53,51 +59,88 @@ const ChatBox = ({ userId }) => {
     setLastActive(res.data);
   };
 
-  const SendMessage = async (e) => {
-    if (newMessage.message == "") {
+  const SendMessage = async () => {
+    // Showing Message Pending if internet is slow or server
+    const pendingMessageId = Date.now();
+    setPendingMessage((prevState) => [
+      ...prevState,
+      {
+        _id: pendingMessageId,
+        message: newMessage.message,
+        replied_to_text: newMessage.replied_to_text,
+        replied_to_messageId: newMessage.replied_to_messageId,
+        replied_to_user: newMessage.replied_to_user,
+        file: newMessage.file,
+        sender: myId,
+        is_edited: false
+      },
+    ]);
+
+    // Storing newMessage in new object,to make message input field blank So user can't send two same messages
+    const date = new Date();
+    const amPM = date.getHours() >= 12 ? "PM" : "AM";
+    const time = date.getHours() + ":" + date.getMinutes() + " " + amPM;
+
+    const messageObject = { ...newMessage, time };
+    setNewMessage({
+      message: "",
+      file: "",
+      replied_to_text: "",
+      replied_to_messageId: "",
+      replied_to_user: "",
+    });
+
+    // Send Message API Request
+    const res = await SendMessageAPI(messageObject, userId);
+    if (!res.ok) {
+      console.log(res.msg);
       return;
-    } else if (e.target.id == "send-message" || e.key == "Enter") {
-      // Showing Message Pending if internet is slow or server
-      const pendingMessageId = Date.now();
-      setPendingMessage((prevState) => [
-        ...prevState,
-        {
-          _id: pendingMessageId,
-          message: newMessage.message,
-          replied_text: newMessage.replied_text,
-          file: newMessage.file,
-          sender: myId,
-        },
-      ]);
-
-      // Storing newMessage in new object,to make message input field blank So user can't send two same messages
-      const date = new Date();
-      const amPM = date.getHours() >= 12 ? "PM" : "AM";
-      const time = date.getHours() + ":" + date.getMinutes() + " " + amPM;
-
-      const messageObject = { ...newMessage, time };
-      setNewMessage({ message: "", file: "", replied_text: "" });
-
-      // Send Message API Request
-      const res = await SendMessageAPI(messageObject, userId);
-      if (!res.ok) {
-        console.log(res.msg);
-        return;
-      }
-
-      // Removing Pending Message
-      setPendingMessage((prevPendingMessages) =>
-        prevPendingMessages.filter(
-          (pendingMessage) => pendingMessage._id != pendingMessageId
-        )
-      );
-
-      setMessages((prevState) => [
-        { ...prevState[0], Today: [...prevState[0]["Today"], res.data] },
-      ]);
     }
+
+    // Removing Pending Message
+    setPendingMessage((prevPendingMessages) =>
+      prevPendingMessages.filter(
+        (pendingMessage) => pendingMessage._id != pendingMessageId
+      )
+    );
+
+    setMessages((prevState) => [
+      { ...prevState[0], Today: [...prevState[0]["Today"], res.data] },
+    ]);
   };
 
+  // Edit Message
+  const EditMessage = async () => {
+    const res = await EditMessageAPI({message: newMessage.message, messageId: editMessage.messageId})
+    if(!res.ok){
+      console.log(res.msg)
+      return
+    }
+    setMessages(prevState => 
+      prevState.map(messageObject => ({
+        ...messageObject,
+        [res.data.createdOn]: messageObject[res.data.createdOn].map(message => {
+          if (message._id === editMessage.messageId) {
+            return { ...message, ...res.data }; 
+          }
+          return message; // Leave other messages untouched
+        })
+      }))
+    );
+    
+    setEditMessage({isEdit: false, messageId: ''})
+    setNewMessage({
+      message: "",
+      file: "",
+      replied_to_text: "",
+      replied_to_messageId: "",
+      replied_to_user: "",
+    });
+  };
+
+
+
+  // Get All Messages
   const GetAllMessages = async () => {
     const res = await GetAllMessagesAPI(userId);
     if (!res.ok) {
@@ -124,10 +167,24 @@ const ChatBox = ({ userId }) => {
   useEffect(() => {
     if (socket) {
       socket.on("newMessage", (message) => {
-        if (message.sender == currentFriendDMDetails[0]._id) {
-          setMessages((prevState) => [
-            { ...prevState[0], Today: [...prevState[0]["Today"], message] },
-          ]);
+        if (currentFriendDMDetails[0] && message.sender == currentFriendDMDetails[0]._id) {
+          if(!message.is_edited){
+            setMessages((prevState) => [
+              { ...prevState[0], Today: [...prevState[0]["Today"], message] },
+            ]);
+          }else {
+            setMessages(prevState => 
+              prevState.map(messageObject => ({
+                ...messageObject,
+                [message.createdOn]: messageObject[message.createdOn].map(prevMessage => {
+                  if (message._id === prevMessage._id) {
+                    return { ...prevMessage, ...message }; 
+                  }
+                  return prevMessage; // Leave other messages untouched
+                })
+              }))
+            );
+          }
         }
       });
     }
@@ -181,7 +238,7 @@ const ChatBox = ({ userId }) => {
         {messages[0] &&
           Object.keys(messages[0]).map((day) => (
             <section
-              className="bg-transparent w-full h-fit flex flex-col gap-3"
+              className="bg-transparent w-full h-fit flex flex-col gap-5"
               key={day}
             >
               <span className="text-secondary-text select-none bg-background px-3 py-1 font-semibold rounded-md text-lg block w-fit mx-auto text-center">
@@ -194,7 +251,12 @@ const ChatBox = ({ userId }) => {
                   message={message}
                   myId={myId}
                   setNewMessage={setNewMessage}
-                  name={currentFriendDMDetails[0]&&currentFriendDMDetails[0].name}
+                  chatUserName={
+                    currentFriendDMDetails[0] ? currentFriendDMDetails[0].name : ""
+                  }
+                  chatUserId={currentFriendDMDetails[0]?currentFriendDMDetails[0]._id:''}
+                  setEditMessage={setEditMessage}
+                  editMessage={editMessage}
                 />
               ))}
             </section>
@@ -210,9 +272,10 @@ const ChatBox = ({ userId }) => {
               key={message._id}
               message={message}
               myId={myId}
-              name={
+              chatUserName={
                 currentFriendDMDetails[0] ? currentFriendDMDetails[0].name : ""
               }
+              chatUserId={currentFriendDMDetails[0]?currentFriendDMDetails[0]._id:''}
             />
           ))}
         </section>
@@ -223,16 +286,20 @@ const ChatBox = ({ userId }) => {
         className="w-full h-fit shadow-md px-4"
       >
         {/* Replied To Text */}
-        {newMessage.replied_text != "" && (
+        {newMessage.replied_to_text != "" && (
           <div className="bg-background px-4 border-t border-l border-r border-border rounded-tr-xl rounded-tl-xl text-secondary-text font-semibold select-none py-2 w-72 text-wrap flex flex-col justify-center">
             <span className="text-sm">
               Replying to{" "}
-              {currentFriendDMDetails[0] ? currentFriendDMDetails[0].name : ""}
+              {myId == newMessage.replied_to_user
+                ? "Yourself"
+                : currentFriendDMDetails[0]
+                ? currentFriendDMDetails[0].name
+                : ""}
             </span>
             <div className="flex">
               <input
                 type="text"
-                value={newMessage.replied_text}
+                value={newMessage.replied_to_text}
                 readOnly
                 className="bg-transparent outline-none border-none w-full"
               />
@@ -245,8 +312,42 @@ const ChatBox = ({ userId }) => {
                 onClick={() => {
                   setNewMessage((prevState) => ({
                     ...prevState,
-                    replied_text: "",
+                    replied_to_text: "",
+                    replied_to_messageId: "",
+                    replied_to_user: "",
                   }));
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Edit Message */}
+        {editMessage.isEdit != "" && (
+          <div className="bg-background px-4 border-t border-l border-r border-border rounded-tr-xl rounded-tl-xl text-secondary-text font-semibold select-none py-2 w-72 text-wrap flex flex-col justify-center">
+            <span className="text-sm">Edit Message</span>
+            <div className="flex">
+              <input
+                type="text"
+                value={newMessage.message}
+                readOnly
+                className="bg-transparent outline-none border-none w-full"
+              />
+              <Image
+                src={"/cross-icon.png"}
+                alt="Cancel"
+                width={24}
+                height={24}
+                className="cursor-pointer"
+                onClick={() => {
+                  setNewMessage((prevState) => ({
+                    ...prevState,
+                    message: "",
+                  }));
+                  setEditMessage({
+                    isEdit: false,
+                    messageId: "",
+                  });
                 }}
               />
             </div>
@@ -257,7 +358,7 @@ const ChatBox = ({ userId }) => {
           <input
             type="text"
             className={`h-full w-full ${
-              newMessage.replied_text
+              newMessage.replied_to_text || editMessage.isEdit
                 ? "rounded-bl-xl rounded-br-xl rounded-tr-xl"
                 : "rounded-xl"
             } bg-background placeholder:text-secondary-text px-3 text-lg text-white outline-none border-r border-border`}
@@ -269,14 +370,32 @@ const ChatBox = ({ userId }) => {
                 message: e.target.value,
               }));
             }}
-            onKeyDown={SendMessage}
+            onKeyDown={(e) => {
+              if(newMessage.message == '' || e.key != 'Enter'){
+                return
+              }
+              else if (editMessage.isEdit) {
+                EditMessage();
+              } else {
+                SendMessage();
+              }
+            }}
           />
           <img
             src="/send-icon.png"
             alt="Send"
             className="w-8 h-8 aspect-square hover:bg-primary-nav-hover px-1 py-1 rounded-md cursor-pointer"
             id="send-message"
-            onClick={SendMessage}
+            onClick={() => {
+              if(newMessage.message == ''){
+                return
+              }
+              else if (editMessage.isEdit) {
+                EditMessage();
+              } else {
+                SendMessage();
+              }
+            }}
           />
           <img
             src="/attachment-icon.png"

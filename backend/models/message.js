@@ -11,11 +11,17 @@ const messageSchema = new Schema({
         ref: 'User',
         required: true
     },
-    replied_to: {
+    replied_to_user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    },
+    replied_to_messageId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message',
+        default: null
     },
-    replied_text:{
+    replied_to_text:{
         type: String,
         default: ''
     },
@@ -34,6 +40,10 @@ const messageSchema = new Schema({
     time: {
         type: String,
         required: true
+    },
+    is_edited: {
+        type: Boolean,
+        default: false,
     }
 }, {timestamps: true})
 

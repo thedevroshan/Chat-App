@@ -84,12 +84,12 @@ export default function Home() {
             {/* Image */}
             <div className="hidden md:flex w-[60vw] h-[100vh] flex-col justify-center items-center">
               <img
-                src="/test1.png"
+                src="/home-banner-1.png"
                 alt=""
                 className="w-[50vw] border border-border rounded-xl"
               />
               <img
-                src="/test2.png"
+                src="/home-banner-2.png"
                 alt=""
                 className="absolute w-[30vw] border border-border rounded-xl ml-44 mt-32 lg:ml-64 xl:mt-56 xl:ml-80"
               />

@@ -45,7 +45,13 @@ export const SendMessage = async (req, res) => {
         message: req.body.message,
         conversation_id: conversationId._id,
         time: req.body.time,
-        replied_text: req.body.replied_text
+        replied_to_text: req.body.replied_to_text,
+        replied_to_messageId:
+          req.body.replied_to_messageId == ""
+            ? null
+            : req.body.replied_to_messageId,
+        replied_to_user:
+          req.body.replied_to_user == "" ? null : req.body.replied_to_user,
       });
 
       if (!newMessage) {
@@ -102,33 +108,38 @@ export const GetAllMessages = async (req, res) => {
 
       if (7 >= isInWeek) {
         if (isInWeek == 0) {
-          if(!messagesByTwoDay['Today']){
-            messagesByTwoDay['Today'] = []
+          if (!messagesByTwoDay["Today"]) {
+            messagesByTwoDay["Today"] = [];
           }
-          messagesByTwoDay['Today'].push(message);
+          messagesByTwoDay["Today"].push(message);
         } else if (isInWeek == 1) {
-          if(!messagesByTwoDay['Yesterday']){
-            messagesByTwoDay['Yesterday'] = []
+          if (!messagesByTwoDay["Yesterday"]) {
+            messagesByTwoDay["Yesterday"] = [];
           }
-          messagesByTwoDay['Yesterday'].push(message);
+          messagesByTwoDay["Yesterday"].push(message);
         } else if (isInWeek >= 2) {
-          if(messagesByDay[createdDay] == undefined){
-            messagesByDay[createdDay] = []
+          if (messagesByDay[createdDay] == undefined) {
+            messagesByDay[createdDay] = [];
           }
-          messagesByDay[createdDay].push(message)
+          messagesByDay[createdDay].push(message);
         }
-      }
-      else{
-        const timeStamp = `${createdMonth} ${createdDate} ${createdYear}`
-        if(!messagesByDate[timeStamp]){
-          messagesByDate[timeStamp] = []
+      } else {
+        const timeStamp = `${createdMonth} ${createdDate} ${createdYear}`;
+        if (!messagesByDate[timeStamp]) {
+          messagesByDate[timeStamp] = [];
         }
-        messagesByDate[timeStamp].push(message)
+        messagesByDate[timeStamp].push(message);
       }
     });
 
-    messagesByTwoDay = messagesByTwoDay['Today']?messagesByTwoDay:messagesByTwoDay = {...messagesByTwoDay, Today: []}
-    const allArrangedMessages = {...messagesByDate,...messagesByDay,...messagesByTwoDay};
+    messagesByTwoDay = messagesByTwoDay["Today"]
+      ? messagesByTwoDay
+      : (messagesByTwoDay = { ...messagesByTwoDay, Today: [] });
+    const allArrangedMessages = {
+      ...messagesByDate,
+      ...messagesByDay,
+      ...messagesByTwoDay,
+    };
     res
       .status(200)
       .json({ ok: true, msg: "All Messages", data: [allArrangedMessages] });
@@ -141,10 +152,53 @@ export const GetAllMessages = async (req, res) => {
   }
 };
 
-
-
 export const EditMessage = async (req, res) => {
   try {
+    const isMessage = await Message.findById(req.params.messageId);
+    if (!isMessage) {
+      return res.status(404).json({ ok: false, msg: "Message Not Found" });
+    }
+
+    const isUpdated = await Message.findByIdAndUpdate(
+      req.params.messageId,
+      {
+        $set: {
+          message: req.body.message,
+          is_edited: true,
+        },
+      },
+      { new: true }
+    );
+    if (!isUpdated) {
+      return res
+        .status(400)
+        .json({ ok: false, msg: "Unable to edit message." });
+    }
+
+    const createdTime = isUpdated.createdAt;
+    const createdDay = createdTime.toString().split(" ")[0];
+    const createdMonth = createdTime.toString().split(" ")[1];
+    const createdDate = createdTime.toString().split(" ")[2];
+    const createdYear = createdTime.toString().split(" ")[3];
+
+    const isInWeek = new Date().getDate() - parseInt(createdDate);
+    let editedMessage = {}
+    if(isInWeek == 0){
+      editedMessage = {...isUpdated.toObject(), createdOn: 'Today'}
+    }else if(isInWeek == 1){
+      editedMessage = {...isUpdated.toObject(), createdOn: 'Yesterday'}
+    }else if(isInWeek < 7 && isInWeek >= 2) {
+      editedMessage = {...isUpdated.toObject(), createdOn: createdDay}
+    }else {
+      editedMessage = {...isUpdated.toObject(), createdOn: `${createdMonth} ${createdDate} ${createdYear}`}
+    }
+    // Getting User SocketId
+    const userSocketId = GetUserSocketId(isUpdated.receiver);
+    socketIO.to(userSocketId).emit("newMessage", editedMessage);
+
+    res
+      .status(200)
+      .json({ ok: true, msg: "Message Edited Successfully", data: editedMessage });
   } catch (error) {
     if (configuration.IS_DEV_ENV) {
       console.log("Error in GetAllMessages Function\n" + error);
