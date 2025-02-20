@@ -17,7 +17,7 @@ import { useSocket } from "../contexts/useSocketContext";
 import { SendMessageAPI, GetAllMessagesAPI,EditMessageAPI } from "../../../api/messageAPI";
 import { GetLastActiveAPI } from "../../../api/userAPI";
 
-const ChatBox = ({ userId }) => {
+const ChatBox = ({ userId, currentFriendDMDetails }) => {
   // User Store
   const myId = useUserStore((state) => state._id);
 
@@ -41,11 +41,6 @@ const ChatBox = ({ userId }) => {
   // References
   const chatBoxRef = useRef();
 
-  // Filtering out the friend whom user is talking. So that user can see user's details at the top of chatbox
-  const friends = useUserStore((state) => state.friends);
-  const currentFriendDMDetails = friends.filter(
-    (friend) => friend._id == userId
-  );
 
   // Socket
   const { onlineUser, socket } = useSocket();
@@ -152,8 +147,8 @@ const ChatBox = ({ userId }) => {
 
   // Getting the user is online or not
   useEffect(() => {
-    if (currentFriendDMDetails[0]) {
-      setOnline(onlineUser.includes(currentFriendDMDetails[0]._id));
+    if (currentFriendDMDetails) {
+      setOnline(onlineUser.includes(currentFriendDMDetails._id));
     }
     return () => {};
   }, [onlineUser]);
@@ -167,7 +162,7 @@ const ChatBox = ({ userId }) => {
   useEffect(() => {
     if (socket) {
       socket.on("newMessage", (message) => {
-        if (currentFriendDMDetails[0] && message.sender == currentFriendDMDetails[0]._id) {
+        if (currentFriendDMDetails && message.sender == currentFriendDMDetails._id) {
           if(!message.is_edited){
             setMessages((prevState) => [
               { ...prevState[0], Today: [...prevState[0]["Today"], message] },
@@ -204,18 +199,18 @@ const ChatBox = ({ userId }) => {
   return (
     <div className="w-[60vw] xl:w-[52vw] h-[100vh] flex flex-col rounded-tl-3xl rounded-bl-3xl bg-foreground ml-2 pb-4">
       <section className="bg-background flex items-center gap-4 w-full h-fit px-2 py-2 rounded-tl-3xl border border-border">
-        {currentFriendDMDetails[0] && (
+        {currentFriendDMDetails && (
           <>
             <ProfilePic
-              profile_pic={currentFriendDMDetails[0].profile_pic}
+              profile_pic={currentFriendDMDetails.profile_pic}
               defaultUserIcon={"/user-icon.png"}
-              width={12}
-              height={12}
+              width={14}
+              height={14}
             />
 
             <div className="flex flex-col w-full h-fit select-none">
               <span className="text-white font-semibold text-lg">
-                {currentFriendDMDetails[0].name}
+                {currentFriendDMDetails.name}
               </span>
               <span className="text-white font-semibold text-sm">
                 {isOnline
@@ -252,9 +247,9 @@ const ChatBox = ({ userId }) => {
                   myId={myId}
                   setNewMessage={setNewMessage}
                   chatUserName={
-                    currentFriendDMDetails[0] ? currentFriendDMDetails[0].name : ""
+                    currentFriendDMDetails.name
                   }
-                  chatUserId={currentFriendDMDetails[0]?currentFriendDMDetails[0]._id:''}
+                  chatUserId={currentFriendDMDetails._id}
                   setEditMessage={setEditMessage}
                   editMessage={editMessage}
                 />
@@ -273,9 +268,9 @@ const ChatBox = ({ userId }) => {
               message={message}
               myId={myId}
               chatUserName={
-                currentFriendDMDetails[0] ? currentFriendDMDetails[0].name : ""
+                currentFriendDMDetails.name
               }
-              chatUserId={currentFriendDMDetails[0]?currentFriendDMDetails[0]._id:''}
+              chatUserId={currentFriendDMDetails._id}
             />
           ))}
         </section>
@@ -292,9 +287,7 @@ const ChatBox = ({ userId }) => {
               Replying to{" "}
               {myId == newMessage.replied_to_user
                 ? "Yourself"
-                : currentFriendDMDetails[0]
-                ? currentFriendDMDetails[0].name
-                : ""}
+                : currentFriendDMDetails.name}
             </span>
             <div className="flex">
               <input

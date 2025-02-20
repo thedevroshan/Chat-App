@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useState } from "react";
+import Image from "next/image";
 
 // Components
 import Button from "./Button";
@@ -64,10 +65,12 @@ const Profile = () => {
           <div className="bg-background w-full h-fit rounded-2xl px-2 py-2 gap-24 flex items-center justify-between">
             {/* Display Picture */}
             <div
-              className={`rounded-full w-32 h-32 aspect-square flex items-center justify-center overflow-clip`}
+              className={`rounded-full w-32 h-32 aspect-square flex items-center justify-center overflow-clip border border-border`}
             >
-              <img
-                src={profile_pic ? profile_pic : '/user-icon.png'}
+              <Image
+                width={1000}
+                height={1000}
+                src={profile_pic ? profile_pic : "/user-icon.png"}
                 alt="Profile Pic"
                 className="w-full h-full object-cover"
               />

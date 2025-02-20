@@ -1,8 +1,9 @@
 # Clone the repo
-git clone https://github.com/username/project-name.git
+git clone https://github.com/thedevroshan/Chat-App.git
 
 # Install dependencies
-npm install
+/backend - yarn add
+/frontend - npm install
 
 # Add Env Variables
 PORT = <PORT>

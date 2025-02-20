@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 // API
 import { GetOtherUserInfoAPI } from "../../../api/userAPI";
@@ -11,30 +12,28 @@ import { useSocket } from "../contexts/useSocketContext";
 // Components
 import ProfilePic from "./ProfilePic";
 
-const ChatBoxDetailPanel = () => {
+const ChatBoxDetailPanel = ({ currentChatUser }) => {
   const { onlineUser } = useSocket();
   // States
   const [users, setUsers] = useState([]);
 
   const GetOnlineUsers = async () => {
-    onlineUser.forEach(async userId => {
-        const res = await GetOtherUserInfoAPI(userId)
-        if(!res.ok){
-            console.log(res.msg)
-            return
-        }
-        setUsers([{profilePic: res.data.profile_pic, id: res.data._id}])
+    onlineUser.forEach(async (userId) => {
+      const res = await GetOtherUserInfoAPI(userId);
+      if (!res.ok) {
+        console.log(res.msg);
+        return;
+      }
+      setUsers([{ profilePic: res.data.profile_pic, id: res.data._id }]);
     });
-  }
-
+  };
 
   useEffect(() => {
-    GetOnlineUsers()
+    GetOnlineUsers();
     return () => {
-      setUsers([])
-    }
-  }, [onlineUser])
-
+      setUsers([]);
+    };
+  }, [onlineUser]);
 
   return (
     <div className="w-[34vw] xl:w-[24vw] bg-foreground border-l-2 border-border h-[100vh]">
@@ -43,9 +42,15 @@ const ChatBoxDetailPanel = () => {
           ACTIVE NOW
         </div>
         <div className="w-full h-fit flex bg-foreground overflow-x-scroll select-none scrollbar-hidden px-2 py-1">
-            {users.map((user)=>(
-              <ProfilePic key={user.id} profile_pic={user.profilePic} defaultUserIcon={'/user-icon.png'} width={12} height={12}/>
-            ))}
+          {users.map((user) => (
+            <ProfilePic
+              key={user.id}
+              profile_pic={user.profilePic}
+              defaultUserIcon={"/user-icon.png"}
+              width={12}
+              height={12}
+            />
+          ))}
         </div>
       </div>
 
@@ -55,20 +60,28 @@ const ChatBoxDetailPanel = () => {
             type="text"
             readOnly
             className="font-semibold text-sm w-[16vw] bg-transparent outline-none border-none text-white"
-            value={"Gaming Katha"}
+            defaultValue={""}
           />
-
-          <div className="flex h-full items-center gap-5">
-            <img src="/spaces-icon.png" alt="" className="w-5 cursor-pointer" />
-            <img
-              src="/settings-icon.png"
-              alt=""
-              className="w-5 cursor-pointer"
-            />
-          </div>
         </div>
 
-        <div className="bg-foreground w-full xl:h-[81vh] h-[78vh] px-2 py-2 overflow-x-hidden overflow-y-scroll scrollbar-hidden"></div>
+        <div className="bg-foreground w-full xl:h-[81vh] h-[78vh] px-2 py-2 overflow-x-hidden overflow-y-scroll scrollbar-hidden">
+          <div className="w-full h-fit flex flex-col px-2 py-2 gap-2 items-center justify-center">
+            <div
+              className={`rounded-full w-56 h-56 aspect-square flex items-center justify-center overflow-clip`}
+            >
+              {/* <Image
+                width={1000}
+                height={1000}
+                src={"/user-icon.png"}
+                alt="Profile Pic"
+                className="w-full h-full object-cover"
+              /> */}
+
+            </div>
+              {/* <span className="text-3xl text-white select-none">{currentChatUser.name}</span>
+              <span className="text-xl select-none text-secondary-text">{currentChatUser.username}</span> */}
+          </div>
+        </div>
       </div>
     </div>
   );

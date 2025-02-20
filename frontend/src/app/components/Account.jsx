@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 
 // React Hooks
 import { useState } from "react";
@@ -237,9 +238,11 @@ const Account = () => {
         {/* User Basic Info Div */}
         <div className="w-full h-fit flex select-none py-1 px-2 items-center justify-center gap-3">
           <div
-            className={`rounded-full w-32 h-32 aspect-square flex items-center justify-center overflow-clip`}
+            className={`rounded-full w-32 h-32 aspect-square flex items-center justify-center overflow-clip border border-border`}
           >
-            <img
+            <Image
+              width={1000}
+              height={1000}
               src={profile_pic ? profile_pic : "/user-icon.png"}
               alt="Profile Pic"
               className="w-full h-full object-cover"
